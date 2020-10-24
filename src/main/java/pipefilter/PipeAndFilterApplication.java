@@ -14,7 +14,7 @@ public class PipeAndFilterApplication {
         final Map<String, Integer> terms = new HashMap<>();
 
         final Pipeline pipeline = new TermFrequencyPipeline(text, terms, new String[] {
-                "tokenizer"
+                "text-streamer", "tokenizer", "term-frequency-counter"
         });
 
         pipeline.run();

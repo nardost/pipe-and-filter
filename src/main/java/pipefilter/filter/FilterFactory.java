@@ -9,8 +9,23 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
+/**
+ * FilterFactory creates filters by reflection (dynamically).
+ * The list of defined filters is available to the factory.
+ * It uses the list to determine which particular Filter to create.
+ *
+ * A Filter of type Filter<T, U> is expected to have a single
+ * constructor with the following signature:
+ * public TheOnlyConstructor(Pipe<T> input, Pipe<U> output, CountDownLatch countdown);
+ * This constraint is important for the factory to be able to create
+ * Filters dynamically by reflection.
+ */
 public class FilterFactory {
 
+    /**
+     * Register available filters here. Give each Filter a unique name which
+     * will be used by the factory to create instances by reflection.
+     */
     private static final Map<String, Class<? extends Filter<?, ?>>> registeredFilters = new HashMap<>();
 
     static {

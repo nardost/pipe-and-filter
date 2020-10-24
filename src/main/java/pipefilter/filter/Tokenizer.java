@@ -22,8 +22,8 @@ class Tokenizer implements Filter<String, String> {
         while(true) {
             try {
                 final String line = input.take();
-                if(line.equals(Configuration.SENTINEL)) {
-                    output.put(Configuration.SENTINEL);
+                if(line.equals(Configuration.SENTINEL_VALUE)) {
+                    output.put(Configuration.SENTINEL_VALUE);
                     break;
                 }
                 final String[] words = line.split("\\s+");

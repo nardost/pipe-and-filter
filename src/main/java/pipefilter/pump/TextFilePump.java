@@ -11,13 +11,13 @@ import java.util.concurrent.CountDownLatch;
 
 import static pipefilter.config.Configuration.*;
 
-public class TextFileSource implements Source<String>, Runnable {
+public class TextFilePump implements Pump<String, String>, Runnable {
 
     private final BufferedReader reader;
     private final Pipe<String> pipe;
     private final CountDownLatch doneSignal;
 
-    public TextFileSource(String filePath, Pipe<String> pipe, CountDownLatch doneSignal) {
+    public TextFilePump(String filePath, Pipe<String> pipe, CountDownLatch doneSignal) {
         try {
             this.pipe = pipe;
             this.reader = Files.newBufferedReader(Paths.get(filePath));
@@ -34,15 +34,24 @@ public class TextFileSource implements Source<String>, Runnable {
             while ((line = reader.readLine()) != null) {
                 pipe.put(line);
             }
-            pipe.put(SENTINEL);
-        } catch (IOException | InterruptedException ie) {
-            ie.printStackTrace();
+            /*
+             * A null line indicates the stream has ended. The
+             * filter will put the sentinel value on the pipe
+             * to notify the next filter down the line that
+             * the stream has ended.
+             */
+            pipe.put(SENTINEL_VALUE);
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
     @Override
     public void run() {
         pump();
+        /*
+         * Decrement the countdown latch when thread is done.
+         */
         doneSignal.countDown();
     }
 }
