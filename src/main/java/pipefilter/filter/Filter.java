@@ -1,5 +1,5 @@
 package pipefilter.filter;
 
-public interface Filter<E, F> extends Runnable {
+public interface Filter<T, U> extends Runnable {
     void process();
 }

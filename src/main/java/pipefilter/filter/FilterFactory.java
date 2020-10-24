@@ -11,17 +11,17 @@ import java.util.concurrent.CountDownLatch;
 
 public class FilterFactory {
 
-    private static final Map<String, Class<? extends Filter<String, String>>> registeredFilters = new HashMap<>();
+    private static final Map<String, Class<? extends Filter<?, ?>>> registeredFilters = new HashMap<>();
 
     static {
         registeredFilters.put("tokenizer", Tokenizer.class);
     }
 
-    public static Filter<String, String> build(String filter, Pipe<String> input, Pipe<String> output, CountDownLatch signal) {
+    public static <T, U> Filter<T, U> build(String filter, Pipe<T> input, Pipe<U> output, CountDownLatch signal) {
         Class<?> c = registeredFilters.get(filter);
         try {
             @SuppressWarnings("unchecked")
-            Constructor<Filter<String, String>> constructor = (Constructor<Filter<String, String>>) c.getConstructors()[0];
+            Constructor<Filter<T, U>> constructor = (Constructor<Filter<T, U>>) c.getConstructors()[0];
             return constructor.newInstance(input, output, signal);
         } catch (IllegalAccessException iae) {
             throw new PipeFilterException("Illegal access exception while building filter " + filter);
