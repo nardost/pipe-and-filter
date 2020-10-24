@@ -17,7 +17,7 @@ public class TextFileSource implements Source<String>, Runnable {
     private final Pipe<String> pipe;
     private final CountDownLatch doneSignal;
 
-    public TextFileSource(String filePath, Pipe<String> pipe, CountDownLatch doneSignal) throws PipeFilterException {
+    public TextFileSource(String filePath, Pipe<String> pipe, CountDownLatch doneSignal) {
         try {
             this.pipe = pipe;
             this.reader = Files.newBufferedReader(Paths.get(filePath));

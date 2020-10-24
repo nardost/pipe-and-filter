@@ -1,6 +1,5 @@
 package pipefilter;
 
-import pipefilter.exception.PipeFilterException;
 import pipefilter.pipeline.Pipeline;
 import pipefilter.pipeline.TermFrequencyPipeline;
 
@@ -9,7 +8,7 @@ import java.util.Map;
 
 public class PipeAndFilterApplication {
 
-    public static void main(String[] args) throws PipeFilterException, InterruptedException {
+    public static void main(String[] args) throws InterruptedException {
 
         final String text = parseCommandLineArguments(args);
         final Map<String, Integer> terms = new HashMap<>();

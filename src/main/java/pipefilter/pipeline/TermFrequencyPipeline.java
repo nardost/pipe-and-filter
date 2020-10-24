@@ -1,7 +1,5 @@
 package pipefilter.pipeline;
 
-import pipefilter.exception.PipeFilterException;
-import pipefilter.filter.Filter;
 import pipefilter.filter.FilterFactory;
 import pipefilter.pipe.BlockingQueuePipe;
 import pipefilter.pipe.Pipe;
@@ -10,8 +8,6 @@ import pipefilter.pump.Source;
 import pipefilter.sink.TermFrequencyCounter;
 import pipefilter.pump.TextFileSource;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,16 +24,16 @@ public class TermFrequencyPipeline implements Pipeline {
     private final List<Thread> pipelineElements;
     private final CountDownLatch doneSignal;
 
-    public TermFrequencyPipeline(String input, Map<String, Integer> output, String[] filters) throws PipeFilterException {
+    public TermFrequencyPipeline(String input, Map<String, Integer> output, String[] filters) {
 
-        final int numberOfActivePipeElements = filters.length + 2;
+        final int activeElements = filters.length + 2;
 
         this.input = input;
         this.output = output;
         this.pipelineElements = new LinkedList<>();
-        this.doneSignal = new CountDownLatch(numberOfActivePipeElements);
+        this.doneSignal = new CountDownLatch(activeElements);
 
-        composePipeline(input, output, filters, numberOfActivePipeElements);
+        composePipeline(input, output, filters, activeElements);
     }
 
     @Override
@@ -46,13 +42,12 @@ public class TermFrequencyPipeline implements Pipeline {
         doneSignal.await();
     }
 
-    private void composePipeline(String input, Map<String, Integer> output, String[] filters, int numberOfActivePipeElements)
-            throws PipeFilterException {
+    private void composePipeline(String input, Map<String, Integer> output, String[] filters, int activeElements) {
         /*
          * (Source) -[p1]-> (F1) -[p2]-> (F2) -[p3]-> (Sink)
          */
-        final List<Pipe<String>> pipes = new ArrayList<>(numberOfActivePipeElements - 1);
-        for(int i = 0; i < numberOfActivePipeElements; i++) {
+        final List<Pipe<String>> pipes = new ArrayList<>(activeElements - 1);
+        for(int i = 0; i < activeElements; i++) {
             pipes.add(new BlockingQueuePipe<>(new ArrayBlockingQueue<>(PIPE_CAPACITY)));
         }
 

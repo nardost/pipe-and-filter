@@ -5,7 +5,7 @@ import pipefilter.pipe.Pipe;
 
 import java.util.concurrent.CountDownLatch;
 
-public class Tokenizer implements Filter<String, String> {
+class Tokenizer implements Filter<String, String> {
 
     private final Pipe<String> input;
     private final Pipe<String> output;
@@ -26,13 +26,12 @@ public class Tokenizer implements Filter<String, String> {
                     output.put(Configuration.SENTINEL);
                     break;
                 }
-                System.out.println("-----------------");
                 final String[] words = line.split("\\s+");
                 for(String word : words) {
-                    System.out.println(word);
                     output.put(word);
                 }
             } catch (InterruptedException ie) {
+                ie.printStackTrace();
             }
         }
     }

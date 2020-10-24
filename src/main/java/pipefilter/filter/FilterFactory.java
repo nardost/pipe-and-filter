@@ -17,8 +17,7 @@ public class FilterFactory {
         registeredFilters.put("tokenizer", Tokenizer.class);
     }
 
-    public static Filter<String, String> build(String filter, Pipe<String> input, Pipe<String> output, CountDownLatch signal)
-            throws PipeFilterException {
+    public static Filter<String, String> build(String filter, Pipe<String> input, Pipe<String> output, CountDownLatch signal) {
         Class<?> c = registeredFilters.get(filter);
         try {
             @SuppressWarnings("unchecked")
@@ -27,7 +26,7 @@ public class FilterFactory {
         } catch (IllegalAccessException iae) {
             throw new PipeFilterException("Illegal access exception while building filter " + filter);
         } catch (InvocationTargetException ite) {
-            throw new PipeFilterException("Invication target exception while building filter " + filter);
+            throw new PipeFilterException("Invocation target exception while building filter " + filter);
         } catch (InstantiationException ie) {
             throw new PipeFilterException("Instantiation exception while building filter " + filter);
         }
