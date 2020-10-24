@@ -5,17 +5,11 @@ import pipefilter.pipe.Pipe;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
+import static pipefilter.config.Registry.registeredSinks;
+
 public class SinkFactory {
-
-    private final static Map<String, Class<? extends Sink<?, ?>>> registeredSinks = new HashMap<>();
-
-    static  {
-        registeredSinks.put("term-frequency-counter", TermFrequencyCounter.class);
-    }
 
     public static <T, U> Sink<T, U> build(String name, Pipe<T> pipe, U output, CountDownLatch signal) {
         Class<?> c = registeredSinks.get(name);

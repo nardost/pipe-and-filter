@@ -5,7 +5,7 @@ import pipefilter.pipe.Pipe;
 
 import java.util.concurrent.CountDownLatch;
 
-class Tokenizer implements Filter<String, String> {
+public class Tokenizer implements Filter<String, String> {
 
     private final Pipe<String> input;
     private final Pipe<String> output;

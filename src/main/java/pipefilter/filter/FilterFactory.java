@@ -5,9 +5,9 @@ import pipefilter.pipe.Pipe;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.CountDownLatch;
+
+import static pipefilter.config.Registry.registeredFilters;
 
 /**
  * FilterFactory creates filters by reflection (dynamically).
@@ -22,28 +22,18 @@ import java.util.concurrent.CountDownLatch;
  */
 public class FilterFactory {
 
-    /**
-     * Register available filters here. Give each Filter a unique name which
-     * will be used by the factory to create instances by reflection.
-     */
-    private static final Map<String, Class<? extends Filter<?, ?>>> registeredFilters = new HashMap<>();
-
-    static {
-        registeredFilters.put("tokenizer", Tokenizer.class);
-    }
-
-    public static <T, U> Filter<T, U> build(String filter, Pipe<T> input, Pipe<U> output, CountDownLatch signal) {
-        Class<?> c = registeredFilters.get(filter);
+    public static <T, U> Filter<T, U> build(String name, Pipe<T> input, Pipe<U> output, CountDownLatch signal) {
+        Class<?> c = registeredFilters.get(name);
         try {
             @SuppressWarnings("unchecked")
             Constructor<Filter<T, U>> constructor = (Constructor<Filter<T, U>>) c.getConstructors()[0];
             return constructor.newInstance(input, output, signal);
         } catch (IllegalAccessException iae) {
-            throw new PipeFilterException("Illegal access exception while building filter " + filter);
+            throw new PipeFilterException("Illegal access exception while building filter " + name);
         } catch (InvocationTargetException ite) {
-            throw new PipeFilterException("Invocation target exception while building filter " + filter);
+            throw new PipeFilterException("Invocation target exception while building filter " + name);
         } catch (InstantiationException ie) {
-            throw new PipeFilterException("Instantiation exception while building filter " + filter);
+            throw new PipeFilterException("Instantiation exception while building filter " + name);
         }
     }
 }

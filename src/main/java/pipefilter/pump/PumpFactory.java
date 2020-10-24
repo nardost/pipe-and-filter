@@ -5,17 +5,11 @@ import pipefilter.pipe.Pipe;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
+import static pipefilter.config.Registry.registeredPumps;
+
 public class PumpFactory {
-
-    private final static Map<String, Class<? extends Pump<?, ?>>> registeredPumps = new HashMap<>();
-
-    static {
-        registeredPumps.put("text-streamer", TextFilePump.class);
-    }
 
     public static <T, U> Pump<T, U> build(String name, T input, Pipe<U> output, CountDownLatch signal) {
         Class<?> c = registeredPumps.get(name);
