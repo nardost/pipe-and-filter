@@ -47,7 +47,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>pipefilter.PipeAndFilterApplication</mainClass>
+                            <mainClass>pipefilter.PipeFilterApplication</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

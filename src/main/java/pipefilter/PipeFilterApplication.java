@@ -6,7 +6,7 @@ import pipefilter.pipeline.TermFrequencyPipeline;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PipeAndFilterApplication {
+public class PipeFilterApplication {
 
     public static void main(String[] args) throws InterruptedException {
 
