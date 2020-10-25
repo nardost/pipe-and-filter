@@ -6,6 +6,17 @@ import java.util.concurrent.CountDownLatch;
 
 import static pipefilter.config.Configuration.SENTINEL_VALUE;
 
+/**
+ * @author Nardos Tessema
+ *
+ * A filter that stems words using Porter algorithm.
+ *
+ * The Porter implementation is the one that is provided
+ * by the instructor (from official website of Porter Algorithm).
+ *
+ * @see pipefilter.filter.Stemmer
+ * @see <a href="https://tartarus.org/martin/PorterStemmer/index.html>Porter</a>
+ */
 public class PorterStemmer implements Filter<String, String> {
 
     private final Pipe<String> input;

@@ -6,6 +6,18 @@ import java.util.concurrent.CountDownLatch;
 
 import static pipefilter.config.Configuration.SENTINEL_VALUE;
 
+/**
+ * @author Nardos Tessema
+ *
+ * A filter that removes non-word characters.
+ *
+ * A word character is defined as [a-zA-Z_0-9] (in Java, '\w').
+ *
+ * The responsibility of this filter is too tiny that it doesn't
+ * deserve to be a filter by itself. In the second part of the project,
+ * I inted to merge this and other small tasks together.
+ * I made it a filter here just to demo the chaining of several filters.
+ */
 public class NonWordCharacterCleaner implements Filter<String, String> {
 
     private final Pipe<String> input;

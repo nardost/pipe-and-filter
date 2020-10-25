@@ -6,6 +6,17 @@ import java.util.concurrent.CountDownLatch;
 
 import static pipefilter.config.Configuration.SENTINEL_VALUE;
 
+/**
+ * @author Nardos Tessema
+ *
+ * A filter that transforms words to lower case.
+ *
+ * The responsibility of this filter it too tiny that the
+ * task does not deserve to be factored out into a filter.
+ * I did this just for the sake of demonstrating the chaining
+ * of filters. In the second part of this project, I intend to
+ * merge this and other small responsibility filters together.
+ */
 public class ToLowerCaseTransformer implements Filter<String, String> {
 
     private final Pipe<String> input;

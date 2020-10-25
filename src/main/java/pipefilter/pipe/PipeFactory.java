@@ -1,6 +1,7 @@
 package pipefilter.pipe;
 
 import pipefilter.exception.PipeFilterException;
+import pipefilter.filter.TermFrequency;
 
 import java.util.concurrent.ArrayBlockingQueue;
 
@@ -27,6 +28,9 @@ public class PipeFactory {
         }
         if(type.equals("java.lang.Double")) {
             return new BlockingQueuePipe<Double>(new ArrayBlockingQueue<>(PIPE_CAPACITY));
+        }
+        if(type.equals("pipefilter.filter.TermFrequency")) {
+            return new BlockingQueuePipe<TermFrequency>(new ArrayBlockingQueue<>(PIPE_CAPACITY));
         }
         throw new PipeFilterException("Unknown pipe type: " + type);
     }

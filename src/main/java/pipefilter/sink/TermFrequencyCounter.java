@@ -23,20 +23,20 @@ public class TermFrequencyCounter implements Sink<String, Map<String, Integer>>,
     public void drain() {
         while(true) {
             try {
-                final String input = pipe.take();
+                final String word = pipe.take();
                 /*
-                 * If the filter takes the sentinel value from
-                 * the pipe, it will assume the stream has ended.
+                 * If the input word is the sentinel value,
+                 * the sink will assume the stream has ended.
                  */
-                if(input.equals(SENTINEL_VALUE)) {
+                if(word.equals(SENTINEL_VALUE)) {
                     break;
                 }
                 /*
                  * A new term will have a frequency of 1. An already existing
                  * term will have its term frequency incremented by 1.
                  */
-                final int frequency = terms.get(input) != null ? terms.get(input) : 0;
-                terms.put(input, 1 + frequency);
+                final int frequency = terms.get(word) != null ? terms.get(word) : 0;
+                terms.put(word, 1 + frequency);
             } catch (InterruptedException ie) {
                 ie.printStackTrace();
             }

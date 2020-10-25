@@ -1,0 +1,66 @@
+package pipefilter.filter;
+
+import pipefilter.pipe.Pipe;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+
+import static pipefilter.config.Configuration.SENTINEL_VALUE;
+
+public class TermFrequencyCounter implements Filter<String, TermFrequency> {
+
+    private final Pipe<String> input;
+    private final Pipe<TermFrequency> output;
+    private final CountDownLatch doneSignal;
+
+    /**
+     * A map of terms already counted.
+     * The key is the term and the value is the count.
+     */
+    private final Map<String, Integer> countedTerms = new HashMap<>();
+
+    public TermFrequencyCounter(Pipe<String> input, Pipe<TermFrequency> output, CountDownLatch doneSignal) {
+        this.input = input;
+        this.output = output;
+        this.doneSignal = doneSignal;
+    }
+
+    @Override
+    public void filter() {
+        while(true) {
+            try {
+                final String word = input.take();
+                TermFrequency tf = new TermFrequency();
+                /*
+                 * If input is the sentinel value, construct
+                 * a TermFrequency object with term = SENTINEL_VALUE
+                 * and put it in the output to signal the end of stream.
+                 */
+                if(word.equals(SENTINEL_VALUE)) {
+                    tf.term = SENTINEL_VALUE;
+                    output.put(tf);
+                    break;
+                }
+                /*
+                 * If term has already been counted before, increment
+                 * its frequency by 1. If word is new, set frequency to 1.
+                 * Put the term into the map of counted terms.
+                 */
+                final int frequency = countedTerms.getOrDefault(word, 0);
+                tf.term = word;
+                tf.frequency = 1 + frequency;
+                countedTerms.put(tf.term, tf.frequency);
+                output.put(tf);
+            } catch (InterruptedException ie) {
+                ie.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void run() {
+        filter();
+        doneSignal.countDown();
+    }
+}

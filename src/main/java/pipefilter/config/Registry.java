@@ -12,6 +12,7 @@ import pipefilter.pump.Pump;
 import pipefilter.pump.TextFilePump;
 import pipefilter.sink.Sink;
 import pipefilter.sink.TermFrequencyCounter;
+import pipefilter.sink.FrequencyTermInverter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,11 +31,12 @@ public class Registry {
 
     static {
         registeredFilters.put("tokenizer", WordBoundaryTokenizer.class);
-        registeredFilters.put("word-filter", NonWordCharacterCleaner.class);
-        registeredFilters.put("to-lower-case", ToLowerCaseTransformer.class);
+        registeredFilters.put("non-word-char-cleaner", NonWordCharacterCleaner.class);
+        registeredFilters.put("to-lower-case-transformer", ToLowerCaseTransformer.class);
         registeredFilters.put("stop-word-remover", StopWordRemover.class);
         registeredFilters.put("opennlp-porter-stemmer", OpenNLPStemmer.class);
         registeredFilters.put("porter-stemmer", PorterStemmer.class);
+        registeredFilters.put("term-frequency-counter", pipefilter.filter.TermFrequencyCounter.class);
     }
 
     /**
@@ -54,5 +56,6 @@ public class Registry {
 
     static  {
         registeredSinks.put("frequency-counter", TermFrequencyCounter.class);
+        registeredSinks.put("frequency-term-inverter", FrequencyTermInverter.class);
     }
 }

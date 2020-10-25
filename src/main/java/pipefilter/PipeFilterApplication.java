@@ -6,6 +6,7 @@ import pipefilter.pipeline.PipelineFactory;
 import pipefilter.pipeline.TermFrequencyPipeline;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class PipeFilterApplication {
@@ -15,22 +16,34 @@ public class PipeFilterApplication {
         try {
             final String text = parseCommandLineArguments(args);
             final Map<String, Integer> terms = new HashMap<>();
+            final Map<Integer, List<String>> frequencies = new HashMap<>();
             final String[] assembly = new String[] {
                     "text-streamer",
                     "tokenizer",
-                    "word-filter",
-                    "to-lower-case",
+                    "non-word-char-cleaner",
+                    "to-lower-case-transformer",
                     "stop-word-remover",
                     "porter-stemmer",
-                    "frequency-counter"
+                    "term-frequency-counter",
+                    "frequency-term-inverter"
+
             };
             String pipelineType = "first";
 
-            final Pipeline pipeline = PipelineFactory.build(text, terms, assembly, pipelineType);
+            final Pipeline pipeline = PipelineFactory.build(text, frequencies, assembly, pipelineType);
 
             pipeline.run();
 
-            terms.forEach((k, v) -> System.out.printf("%s: %d%n", k, v));
+            //terms.forEach((k, v) -> System.out.printf("%s: %d%n", k, v));
+
+            StringBuilder sb = new StringBuilder();
+            frequencies.forEach((k, v) -> {
+                sb.append(k).append(" -> ");
+                v.forEach(t -> sb.append(t).append(" "));
+                sb.append("\n");
+            });
+            System.out.println(sb.toString());
+
         } catch (PipeFilterException pfe) {
             System.out.println(pfe.getMessage());
         }
