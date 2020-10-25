@@ -1,6 +1,8 @@
 package pipefilter;
 
+import pipefilter.exception.PipeFilterException;
 import pipefilter.pipeline.Pipeline;
+import pipefilter.pipeline.PipelineFactory;
 import pipefilter.pipeline.TermFrequencyPipeline;
 
 import java.util.HashMap;
@@ -10,17 +12,23 @@ public class PipeFilterApplication {
 
     public static void main(String[] args) throws InterruptedException {
 
-        final String text = parseCommandLineArguments(args);
-        final Map<String, Integer> terms = new HashMap<>();
+        try {
+            final String text = parseCommandLineArguments(args);
+            final Map<String, Integer> terms = new HashMap<>();
+            final String[] assembly = new String[]{
+                    "text-streamer", "tokenizer", "frequency-counter"
+            };
+            String pipelineType = "first";
 
-        final Pipeline pipeline = new TermFrequencyPipeline(text, terms, new String[] {
-                "text-streamer", "tokenizer", "term-frequency-counter"
-        });
+            final Pipeline pipeline = PipelineFactory.build(text, terms, assembly, pipelineType);
 
-        pipeline.run();
+            pipeline.run();
 
-        terms.forEach((k, v) -> System.out.printf("%s: %d%n", k, v));
-}
+            terms.forEach((k, v) -> System.out.printf("%s: %d%n", k, v));
+        } catch (PipeFilterException pfe) {
+            System.out.println(pfe.getMessage());
+        }
+    }
 
     /**
      * Get the file to be processed
@@ -30,6 +38,6 @@ public class PipeFilterApplication {
         if(args.length == 1) {
             return args[0];
         }
-        throw new RuntimeException("Provide file path.");
+        throw new PipeFilterException("Provide file path.");
     }
 }

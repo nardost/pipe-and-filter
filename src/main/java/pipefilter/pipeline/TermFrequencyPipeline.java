@@ -1,18 +1,21 @@
 package pipefilter.pipeline;
 
+import pipefilter.filter.Filter;
 import pipefilter.filter.FilterFactory;
 import pipefilter.pipe.Pipe;
 import pipefilter.pipe.PipeFactory;
+import pipefilter.pump.Pump;
 import pipefilter.pump.PumpFactory;
+import pipefilter.sink.Sink;
 import pipefilter.sink.SinkFactory;
 
-import java.lang.reflect.ParameterizedType;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
-import static pipefilter.config.Registry.*;
+import static pipefilter.filter.FilterFactory.inferFilterOutputType;
+import static pipefilter.pump.PumpFactory.inferPumpOutputType;
 
 /**
  * The Pipeline class abstracts the entirety of the
@@ -70,58 +73,32 @@ public class TermFrequencyPipeline implements Pipeline {
     private void compose(String input, Map<String, Integer> output, String[] components) {
 
         /*
-         * Create the source and attach to pipeline
+         * Create pump and attach to pipeline
          */
         String name = components[0];
         String pipeDataType = inferPumpOutputType(name);
 
         Pipe<?> out = PipeFactory.build(pipeDataType);
         Pipe<?> in = out;
-
-        pipelineComponents.add(new Thread(PumpFactory.build(name, input, out, doneSignal)));
+        Pump<?, ?> pump = PumpFactory.build(name, input, out, doneSignal);
+        pipelineComponents.add(new Thread(pump));
 
         /*
-         * Create the filters and attach to pipeline
+         * Create filters and attach to pipeline
          */
         for(int i = 1; i <= components.length - 2; i++) {
             name = components[i];
             pipeDataType = inferFilterOutputType(name);
             out = PipeFactory.build(pipeDataType);
-            pipelineComponents.add(new Thread(FilterFactory.build(name, in, out, doneSignal)));
+            Filter<?, ?> filter = FilterFactory.build(name, in, out, doneSignal);
+            pipelineComponents.add(new Thread(filter));
             in = out;
         }
         /*
-         * Create the sink and attach to pipeline
+         * Create sink and attach to pipeline
          */
         name = components[components.length - 1];
-        pipelineComponents.add(new Thread(SinkFactory.build(name, in, output, doneSignal)));
-    }
-
-    /**
-     * This method infers the output type of a filter by reflection.
-     *
-     * Example: Suppose there is a Filter named "some-filter" and
-     *          defined as:
-     *
-     *   public class SomeFilter implements Filter<String, IntStream>
-     *
-     * inferFilterOutput("some-filter") will return "java.util.stream.IntStream"
-     *
-     * @param name the name of the filter in the registry
-     * @return the output type fo the filter
-     */
-    private String inferFilterOutputType(String name) {
-        ParameterizedType t = (ParameterizedType) registeredFilters.get(name).getGenericInterfaces()[0];
-        return t.getActualTypeArguments()[1].getTypeName();
-    }
-    /**
-     * This method infers the output type of a pump by reflection.
-     *
-     * @param name the name of the pump in the registry
-     * @return the output type of the pump
-     */
-    private String inferPumpOutputType(String name) {
-        ParameterizedType t = (ParameterizedType) registeredPumps.get(name).getGenericInterfaces()[0];
-        return t.getActualTypeArguments()[1].getTypeName();
+        Sink<?, ?> sink = SinkFactory.build(name, in, output, doneSignal);
+        pipelineComponents.add(new Thread(sink));
     }
 }

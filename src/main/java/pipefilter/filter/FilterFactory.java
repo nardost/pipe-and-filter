@@ -5,6 +5,7 @@ import pipefilter.pipe.Pipe;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.ParameterizedType;
 import java.util.concurrent.CountDownLatch;
 
 import static pipefilter.config.Registry.registeredFilters;
@@ -35,5 +36,41 @@ public class FilterFactory {
         } catch (InstantiationException ie) {
             throw new PipeFilterException("Instantiation exception while building filter " + name);
         }
+    }
+
+    /**
+     * This method infers the input type of a filter by reflection.
+     *
+     * Example: Suppose there is a Filter named "some-filter" and
+     *          defined as:
+     *
+     *   public class SomeFilter implements Filter<String, IntStream>
+     *
+     * inferFilterInput("some-filter") will return "java.lang.String"
+     *
+     * @param name the name of the filter in the registry
+     * @return the input type of the filter
+     */
+    public static String inferFilterInputType(String name) {
+        ParameterizedType t = (ParameterizedType) registeredFilters.get(name).getGenericInterfaces()[0];
+        return t.getActualTypeArguments()[0].getTypeName();
+    }
+
+    /**
+     * This method infers the output type of a filter by reflection.
+     *
+     * Example: Suppose there is a Filter named "some-filter" and
+     *          defined as:
+     *
+     *   public class SomeFilter implements Filter<String, IntStream>
+     *
+     * inferFilterOutput("some-filter") will return "java.util.stream.IntStream"
+     *
+     * @param name the name of the filter in the registry
+     * @return the output type of the filter
+     */
+    public static String inferFilterOutputType(String name) {
+        ParameterizedType t = (ParameterizedType) registeredFilters.get(name).getGenericInterfaces()[0];
+        return t.getActualTypeArguments()[1].getTypeName();
     }
 }

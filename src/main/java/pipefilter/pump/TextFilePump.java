@@ -37,7 +37,7 @@ public class TextFilePump implements Pump<String, String>, Runnable {
             /*
              * A null line indicates the stream has ended. The
              * filter will put the sentinel value on the pipe
-             * to notify the next filter down the line that
+             * to notify the next component down the line that
              * the stream has ended.
              */
             pipe.put(SENTINEL_VALUE);

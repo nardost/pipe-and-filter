@@ -5,8 +5,10 @@ import pipefilter.pipe.Pipe;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.ParameterizedType;
 import java.util.concurrent.CountDownLatch;
 
+import static pipefilter.config.Registry.registeredPumps;
 import static pipefilter.config.Registry.registeredSinks;
 
 public class SinkFactory {
@@ -24,5 +26,26 @@ public class SinkFactory {
         } catch (InstantiationException ie) {
             throw new PipeFilterException("Instantiation exception while building filter " + name);
         }
+    }
+
+    /**
+     * This method infers the input type of a sink by reflection.
+     *
+     * @param name the name of the sink in the registry
+     * @return the input type of the sink
+     */
+    public static String inferSinkInputType(String name) {
+        ParameterizedType t = (ParameterizedType) registeredSinks.get(name).getGenericInterfaces()[0];
+        return t.getActualTypeArguments()[0].getTypeName();
+    }
+    /**
+     * This method infers the output type of a sink by reflection.
+     *
+     * @param name the name of the sink in the registry
+     * @return the output type of the sink
+     */
+    public static String inferSinkOutputType(String name) {
+        ParameterizedType t = (ParameterizedType) registeredSinks.get(name).getGenericInterfaces()[0];
+        return t.getActualTypeArguments()[1].getTypeName();
     }
 }
