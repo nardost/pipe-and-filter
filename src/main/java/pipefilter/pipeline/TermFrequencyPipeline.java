@@ -1,18 +1,15 @@
 package pipefilter.pipeline;
 
 import pipefilter.filter.FilterFactory;
-import pipefilter.pipe.BlockingQueuePipe;
 import pipefilter.pipe.Pipe;
+import pipefilter.pipe.PipeFactory;
 import pipefilter.pump.PumpFactory;
 import pipefilter.sink.SinkFactory;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CountDownLatch;
-
-import static pipefilter.config.Configuration.*;
 
 /**
  * The Pipeline class abstracts the entirety of the
@@ -41,13 +38,13 @@ public class TermFrequencyPipeline implements Pipeline {
     public void run() throws InterruptedException {
         pipelineComponents.forEach(Thread::start);
         /*
-         * Wait for all threads to be done.
+         * Wait for all threads to be done before returning to the main thread.
          */
         doneSignal.await();
     }
 
     private void compose(String input, Map<String, Integer> output, String[] components) {
-        Pipe<String> out = new BlockingQueuePipe<>(new ArrayBlockingQueue<>(PIPE_CAPACITY));
+        Pipe<String> out = PipeFactory.build();
         Pipe<String> in = out;
         /*
          * Create the source and attach to pipeline
@@ -59,7 +56,7 @@ public class TermFrequencyPipeline implements Pipeline {
          */
         for(int i = 1; i <= components.length - 2; i++) {
             name = components[i];
-            out = new BlockingQueuePipe<>(new ArrayBlockingQueue<>(PIPE_CAPACITY));
+            out = PipeFactory.build();
             pipelineComponents.add(new Thread(FilterFactory.build(name, in, out, doneSignal)));
             in = out;
         }
