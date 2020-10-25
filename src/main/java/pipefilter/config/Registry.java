@@ -1,7 +1,12 @@
 package pipefilter.config;
 
 import pipefilter.filter.Filter;
-import pipefilter.filter.Tokenizer;
+import pipefilter.filter.OpenNLPStemmer;
+import pipefilter.filter.PorterStemmer;
+import pipefilter.filter.StopWordRemover;
+import pipefilter.filter.ToLowerCaseTransformer;
+import pipefilter.filter.WordBoundaryTokenizer;
+import pipefilter.filter.NonWordCharacterCleaner;
 import pipefilter.pump.FakePump;
 import pipefilter.pump.Pump;
 import pipefilter.pump.TextFilePump;
@@ -24,7 +29,12 @@ public class Registry {
     public static final Map<String, Class<? extends Filter<?, ?>>> registeredFilters = new HashMap<>();
 
     static {
-        registeredFilters.put("tokenizer", Tokenizer.class);
+        registeredFilters.put("tokenizer", WordBoundaryTokenizer.class);
+        registeredFilters.put("word-filter", NonWordCharacterCleaner.class);
+        registeredFilters.put("to-lower-case", ToLowerCaseTransformer.class);
+        registeredFilters.put("stop-word-remover", StopWordRemover.class);
+        registeredFilters.put("opennlp-porter-stemmer", OpenNLPStemmer.class);
+        registeredFilters.put("porter-stemmer", PorterStemmer.class);
     }
 
     /**

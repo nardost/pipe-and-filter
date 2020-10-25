@@ -1,17 +1,20 @@
 package pipefilter.filter;
 
-import pipefilter.config.Configuration;
 import pipefilter.pipe.Pipe;
 
 import java.util.concurrent.CountDownLatch;
 
-public class Tokenizer implements Filter<String, String> {
+import static pipefilter.config.Configuration.SENTINEL_VALUE;
+
+public class WordBoundaryTokenizer implements Filter<String, String> {
 
     private final Pipe<String> input;
     private final Pipe<String> output;
     private final CountDownLatch doneSignal;
 
-    public Tokenizer(Pipe<String> input, Pipe<String> output, CountDownLatch doneSignal) {
+    private static final String WORD_BOUNDARY = "\\b";
+
+    public WordBoundaryTokenizer(Pipe<String> input, Pipe<String> output, CountDownLatch doneSignal) {
         this.input = input;
         this.output = output;
         this.doneSignal = doneSignal;
@@ -22,11 +25,14 @@ public class Tokenizer implements Filter<String, String> {
         while(true) {
             try {
                 final String line = input.take();
-                if(line.equals(Configuration.SENTINEL_VALUE)) {
-                    output.put(Configuration.SENTINEL_VALUE);
+                if(line.equals(SENTINEL_VALUE)) {
+                    output.put(SENTINEL_VALUE);
                     break;
                 }
-                final String[] words = line.split("\\s+");
+                /*
+                 * Split line by word boundary.
+                 */
+                final String[] words = line.split(WORD_BOUNDARY);
                 for(String word : words) {
                     output.put(word);
                 }

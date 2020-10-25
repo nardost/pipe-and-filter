@@ -16,7 +16,13 @@ public class PipeFilterApplication {
             final String text = parseCommandLineArguments(args);
             final Map<String, Integer> terms = new HashMap<>();
             final String[] assembly = new String[] {
-                    "text-streamer", "tokenizer", "frequency-counter"
+                    "text-streamer",
+                    "tokenizer",
+                    "word-filter",
+                    "to-lower-case",
+                    "stop-word-remover",
+                    "porter-stemmer",
+                    "frequency-counter"
             };
             String pipelineType = "first";
 
