@@ -18,7 +18,7 @@ public class Tokenizer implements Filter<String, String> {
     }
 
     @Override
-    public void process() {
+    public void filter() {
         while(true) {
             try {
                 final String line = input.take();
@@ -38,7 +38,7 @@ public class Tokenizer implements Filter<String, String> {
 
     @Override
     public void run() {
-        process();
+        filter();
         doneSignal.countDown();
     }
 }
