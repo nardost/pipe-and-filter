@@ -51,7 +51,7 @@ public class FilterFactory {
      * @param name the name of the filter in the registry
      * @return the input type of the filter
      */
-    public static String inferFilterInputType(String name) {
+    public static String getFilterInputType(String name) {
         ParameterizedType t = (ParameterizedType) registeredFilters.get(name).getGenericInterfaces()[0];
         return t.getActualTypeArguments()[0].getTypeName();
     }
@@ -69,7 +69,7 @@ public class FilterFactory {
      * @param name the name of the filter in the registry
      * @return the output type of the filter
      */
-    public static String inferFilterOutputType(String name) {
+    public static String getFilterOutputType(String name) {
         ParameterizedType t = (ParameterizedType) registeredFilters.get(name).getGenericInterfaces()[0];
         return t.getActualTypeArguments()[1].getTypeName();
     }

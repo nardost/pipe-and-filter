@@ -19,11 +19,11 @@ public class PumpFactory {
             Constructor<Pump<T, U>> constructor = (Constructor<Pump<T, U>>) c.getConstructors()[0];
             return constructor.newInstance(input, output, signal);
         } catch (IllegalAccessException iae) {
-            throw new PipeFilterException("Illegal access exception while building filter " + name);
+            throw new PipeFilterException("Illegal access exception while building pump " + name);
         } catch (InvocationTargetException ite) {
-            throw new PipeFilterException("Invocation target exception while building filter " + name);
+            throw new PipeFilterException("Invocation target exception while building pump " + name);
         } catch (InstantiationException ie) {
-            throw new PipeFilterException("Instantiation exception while building filter " + name);
+            throw new PipeFilterException("Instantiation exception while building pump " + name);
         }
     }
 
@@ -33,7 +33,7 @@ public class PumpFactory {
      * @param name the name of the pump in the registry
      * @return the input type of the pump
      */
-    public static String inferPumpInputType(String name) {
+    public static String getPumpInputType(String name) {
         ParameterizedType t = (ParameterizedType) registeredPumps.get(name).getGenericInterfaces()[0];
         return t.getActualTypeArguments()[0].getTypeName();
     }
@@ -44,7 +44,7 @@ public class PumpFactory {
      * @param name the name of the pump in the registry
      * @return the output type of the pump
      */
-    public static String inferPumpOutputType(String name) {
+    public static String getPumpOutputType(String name) {
         ParameterizedType t = (ParameterizedType) registeredPumps.get(name).getGenericInterfaces()[0];
         return t.getActualTypeArguments()[1].getTypeName();
     }

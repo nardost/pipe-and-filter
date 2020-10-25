@@ -5,8 +5,6 @@ import pipefilter.filter.FilterFactory;
 import pipefilter.pump.PumpFactory;
 import pipefilter.sink.SinkFactory;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.Map;
 
 import static pipefilter.config.Registry.*;
@@ -62,16 +60,16 @@ public class PipelineFactory {
     }
 
     private static void pipeTypesMatch(String[] pipeline) {
-        String out = PumpFactory.inferPumpOutputType(pipeline[0]);
+        String out = PumpFactory.getPumpOutputType(pipeline[0]);
         String in;
         for(int i = 1; i < pipeline.length - 1; i++) {
-            in = FilterFactory.inferFilterInputType(pipeline[i]);
+            in = FilterFactory.getFilterInputType(pipeline[i]);
             if(!out.equals(in)) {
                 throw new PipeFilterException("Pipe mismatch: " + pipeline[i - 1] + " <> " + pipeline[1]);
             }
-            out = FilterFactory.inferFilterOutputType(pipeline[i]);
+            out = FilterFactory.getFilterOutputType(pipeline[i]);
         }
-        in = SinkFactory.inferSinkInputType(pipeline[pipeline.length - 1]);
+        in = SinkFactory.getSinkInputType(pipeline[pipeline.length - 1]);
         if(!out.equals(in)) {
             throw new PipeFilterException("Pipe mismatch: " + pipeline[pipeline.length - 2] + " <> " + pipeline[pipeline.length - 1]);
         }

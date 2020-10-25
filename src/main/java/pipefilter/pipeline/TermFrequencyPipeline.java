@@ -14,8 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
-import static pipefilter.filter.FilterFactory.inferFilterOutputType;
-import static pipefilter.pump.PumpFactory.inferPumpOutputType;
+import static pipefilter.filter.FilterFactory.getFilterOutputType;
+import static pipefilter.pump.PumpFactory.getPumpOutputType;
 
 /**
  * The Pipeline class abstracts the entirety of the
@@ -76,7 +76,7 @@ public class TermFrequencyPipeline implements Pipeline {
          * Create pump and attach to pipeline
          */
         String name = components[0];
-        String pipeDataType = inferPumpOutputType(name);
+        String pipeDataType = getPumpOutputType(name);
 
         Pipe<?> out = PipeFactory.build(pipeDataType);
         Pipe<?> in = out;
@@ -88,7 +88,7 @@ public class TermFrequencyPipeline implements Pipeline {
          */
         for(int i = 1; i <= components.length - 2; i++) {
             name = components[i];
-            pipeDataType = inferFilterOutputType(name);
+            pipeDataType = getFilterOutputType(name);
             out = PipeFactory.build(pipeDataType);
             Filter<?, ?> filter = FilterFactory.build(name, in, out, doneSignal);
             pipelineComponents.add(new Thread(filter));

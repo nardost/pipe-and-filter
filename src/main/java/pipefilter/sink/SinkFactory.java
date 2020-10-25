@@ -8,7 +8,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.util.concurrent.CountDownLatch;
 
-import static pipefilter.config.Registry.registeredPumps;
 import static pipefilter.config.Registry.registeredSinks;
 
 public class SinkFactory {
@@ -20,11 +19,11 @@ public class SinkFactory {
             Constructor<Sink<T, U>> constructor = (Constructor<Sink<T, U>>) c.getConstructors()[0];
             return constructor.newInstance(pipe, output, signal);
         }  catch (IllegalAccessException iae) {
-            throw new PipeFilterException("Illegal access exception while building filter " + name);
+            throw new PipeFilterException("Illegal access exception while building sink " + name);
         } catch (InvocationTargetException ite) {
-            throw new PipeFilterException("Invocation target exception while building filter " + name);
+            throw new PipeFilterException("Invocation target exception while building sink " + name);
         } catch (InstantiationException ie) {
-            throw new PipeFilterException("Instantiation exception while building filter " + name);
+            throw new PipeFilterException("Instantiation exception while building sink " + name);
         }
     }
 
@@ -34,7 +33,7 @@ public class SinkFactory {
      * @param name the name of the sink in the registry
      * @return the input type of the sink
      */
-    public static String inferSinkInputType(String name) {
+    public static String getSinkInputType(String name) {
         ParameterizedType t = (ParameterizedType) registeredSinks.get(name).getGenericInterfaces()[0];
         return t.getActualTypeArguments()[0].getTypeName();
     }
@@ -44,7 +43,7 @@ public class SinkFactory {
      * @param name the name of the sink in the registry
      * @return the output type of the sink
      */
-    public static String inferSinkOutputType(String name) {
+    public static String getSinkOutputType(String name) {
         ParameterizedType t = (ParameterizedType) registeredSinks.get(name).getGenericInterfaces()[0];
         return t.getActualTypeArguments()[1].getTypeName();
     }
