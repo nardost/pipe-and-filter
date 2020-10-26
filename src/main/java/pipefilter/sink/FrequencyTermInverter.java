@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
-import static pipefilter.config.Configuration.SENTINEL_VALUE;
-
 /**
  * @author Nardos Tessema
  *
@@ -58,11 +56,10 @@ public class FrequencyTermInverter implements Sink<TermFrequency, Map<Integer, L
         while(true) {
             try {
                 final TermFrequency tf = input.take();
-                final String word = tf.term;
                 /*
                  * If input is sentinel value, be done.
                  */
-                if(word.equals(SENTINEL_VALUE)) {
+                if(tf.isSentinelValue()) {
                     break;
                 }
                 /*

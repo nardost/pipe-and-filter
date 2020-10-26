@@ -8,7 +8,6 @@ import pipefilter.filter.StopWordRemover;
 import pipefilter.filter.ToLowerCaseTransformer;
 import pipefilter.filter.WordBoundaryTokenizer;
 import pipefilter.filter.NonAlphaNumericWordRemover;
-import pipefilter.pump.FakePump;
 import pipefilter.pump.Pump;
 import pipefilter.pump.TextFilePump;
 import pipefilter.sink.Sink;
@@ -48,7 +47,6 @@ public class Registry {
 
     static {
         registeredPumps.put("text-streamer", TextFilePump.class);
-        registeredPumps.put("fake-pump", FakePump.class);
     }
 
     /**
