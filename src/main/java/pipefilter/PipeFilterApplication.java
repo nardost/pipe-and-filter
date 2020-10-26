@@ -50,7 +50,7 @@ public class PipeFilterApplication {
             pipeline.run();
             /*
              * At this point, all the threads have finished their jobs.
-             *  - guaranteed by the Count Down Latch.
+             *  - guaranteed by the CountDownLatch signal.
              */
 
             final int N_MOST_COMMON = 10;

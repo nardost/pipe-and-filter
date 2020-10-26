@@ -6,6 +6,9 @@ import java.util.HashMap;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+/**
+ * This test class test pipeline composition methods.
+ */
 public class PipelineCompositionTest {
 
     @Test
@@ -55,6 +58,9 @@ public class PipelineCompositionTest {
                 .hasMessageContaining("Sink not in the registry");
     }
 
+    /**
+     * Happy path test. No exception will be thrown.
+     */
     @Test
     public void pipelineCreationWithCompatibleComponentsDoesNotThrowAnyException() {
         final String[] assembly = new String[] {

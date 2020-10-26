@@ -5,6 +5,7 @@ import pipefilter.pipe.Pipe;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -68,7 +69,7 @@ public class FrequencyTermInverter implements Sink<TermFrequency, Map<Integer, L
                  * list with frequency as the key.
                  */
                 if(!output.containsKey(tf.frequency)) {
-                    output.put(tf.frequency, new ArrayList<>(Arrays.asList(tf.term)));
+                    output.put(tf.frequency, new ArrayList<>(Collections.singletonList(tf.term)));
                 } else {
                     output.get(tf.frequency).add(tf.term);
                 }

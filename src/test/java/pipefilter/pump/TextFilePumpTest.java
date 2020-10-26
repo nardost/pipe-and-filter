@@ -42,9 +42,12 @@ public class TextFilePumpTest {
                 "the second line",
                 "the last line"
         };
-        Path input = path.resolve("input-file.txt");
+        Path input = path.resolve("a-temporary-file-that-will-vanish-after-tests.txt");
         Files.write(input, Arrays.asList(lines));
-
+        /*
+         * set the input file path to the absolute path of the
+         * temporary file that the test engine injected - @TempDir.
+         */
         file = input.toAbsolutePath().toString();
     }
 
