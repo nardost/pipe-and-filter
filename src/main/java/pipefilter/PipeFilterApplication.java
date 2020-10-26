@@ -3,20 +3,29 @@ package pipefilter;
 import pipefilter.exception.PipeFilterException;
 import pipefilter.pipeline.Pipeline;
 import pipefilter.pipeline.PipelineFactory;
-import pipefilter.pipeline.TermFrequencyPipeline;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class PipeFilterApplication {
+
+    /**
+     * The output of the frequency-term-inverter sink.
+     * TODO: Choice between HashMap and TreeMap
+     */
+    private static final Map<Integer, List<String>> frequencies = new TreeMap<>(Collections.reverseOrder());
+    /**
+     * The output of the frequency-counter sink.
+     */
+    private static final  Map<String, Integer> terms = new HashMap<>();
 
     public static void main(String[] args) throws InterruptedException {
 
         try {
             final String text = parseCommandLineArguments(args);
-            final Map<String, Integer> terms = new HashMap<>();
-            final Map<Integer, List<String>> frequencies = new HashMap<>();
             final String[] assembly = new String[] {
                     "text-streamer",
                     "tokenizer",
@@ -26,24 +35,28 @@ public class PipeFilterApplication {
                     "porter-stemmer",
                     "term-frequency-counter",
                     "frequency-term-inverter"
-
             };
-            String pipelineType = "first";
 
+            /*
+             * Construct the pipeline. There is only
+             * one type of pipeline for now - first.
+             */
+            final String pipelineType = "first";
             final Pipeline pipeline = PipelineFactory.build(text, frequencies, assembly, pipelineType);
-
+            /*
+             * Run the pipeline
+             */
             pipeline.run();
+            /*
+             * At this point, all the threads have finished their jobs.
+             *  - guaranteed by the Count Down Latch.
+             */
 
-            //terms.forEach((k, v) -> System.out.printf("%s: %d%n", k, v));
-
-            StringBuilder sb = new StringBuilder();
-            frequencies.forEach((k, v) -> {
-                sb.append(k).append(" -> ");
-                v.forEach(t -> sb.append(t).append(" "));
-                sb.append("\n");
-            });
-            System.out.println(sb.toString());
-
+            final int N_MOST_COMMON = 10;
+            Map<Integer, List<String>> mostCommon = Utilities.mostCommonTerms(frequencies, N_MOST_COMMON);
+            Map<Integer, List<String>> trimmedAndSorted = Utilities.trim(frequencies);
+            //System.out.println(Utilities.prettyPrintMap(frequencies));
+            System.out.println(Utilities.prettyPrintMap(mostCommon));
         } catch (PipeFilterException pfe) {
             System.out.println(pfe.getMessage());
         }

@@ -31,12 +31,15 @@ import static pipefilter.config.Configuration.SENTINEL_VALUE;
  *         key:   frequency of terms
  *         value: list of terms with the key as their common frequency.
  *
- * The keys of the output map are naturally sorted in ascending order
- * without any explicit sorting operation - magic?
+ * If the underlying map of output is a HashMap, the keys of the output map
+ * are naturally sorted in ascending order without any explicit sorting operation.
  * Reason: terms are counted as they occur in the pipe. So, the first time a
  * term appears, its frequency is 1, and it belongs in the map under key = 1.
  * Next time it appears in the pipe, its frequency is 2 (key = 2). Then 3,
  * (key = 3) and so on => the keys of the map are incrementally created...
+ *
+ * If the underlying map of output is a TreeMap, the keys will be sorted in
+ * natural/reverse order depending on the comparator used to instantiate the TreeMap.
  */
 public class FrequencyTermInverter implements Sink<TermFrequency, Map<Integer, List<String>>> {
 
@@ -74,7 +77,7 @@ public class FrequencyTermInverter implements Sink<TermFrequency, Map<Integer, L
                 }
                 /*
                  * If this is not the first occurrence of the term (frequency > 1),
-                 * the term is also in the previous list (term is inserted two lists).
+                 * the term is also in the previous list (term is inserted in two lists).
                  * Get the previous list and remove term so that term lives only
                  * in its highest-frequency-so-far list.
                  */

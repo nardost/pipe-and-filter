@@ -14,10 +14,15 @@ import static pipefilter.config.Configuration.SENTINEL_VALUE;
  * This filter uses the Apache Open NLP implementation of the
  * Porter stemming algorithm to stem words.
  *
- * This filter is written as an alternative to another one that
+ * This filter is written as an alternative to the one that
  * uses the Porter implementation downloaded from Porter's homepage.
  *
- * The maven dependency used is:
+ * I haven't seen any difference in the outputs of the two so far.
+ * I believe this one is more dependable than a copy-pasted code.
+ *       - comes from the reputed Apache OpenNLP project (tested, etc...)
+ *       - dependency is introduced in the code base properly (the Maven way)
+ *
+ * The maven dependency is:
  *
  * <dependency>
  *   <groupId>org.apache.opennlp</groupId>

@@ -1,6 +1,8 @@
 package pipefilter.filter;
 
 /**
+ * Porter Algorithm implementation.
+ *
  * Edited By: Nardos Tessema
  *
  *     - The main method has been removed as it is not needed here.
