@@ -29,7 +29,8 @@ public class PipeFilterApplication {
             final String[] assembly = new String[] {
                     "text-streamer",
                     "tokenizer",
-                    "non-word-char-cleaner",
+                    "non-alphanumeric-word-remover",
+                    "numeric-only-word-remover",
                     "to-lower-case-transformer",
                     "stop-word-remover",
                     "porter-stemmer",
@@ -41,7 +42,7 @@ public class PipeFilterApplication {
              * Construct the pipeline. There is only
              * one type of pipeline for now - first.
              */
-            final String pipelineType = "first";
+            final String pipelineType = "serial";
             final Pipeline pipeline = PipelineFactory.build(text, frequencies, assembly, pipelineType);
             /*
              * Run the pipeline

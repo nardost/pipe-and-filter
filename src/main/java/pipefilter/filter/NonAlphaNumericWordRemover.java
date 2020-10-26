@@ -9,22 +9,24 @@ import static pipefilter.config.Configuration.SENTINEL_VALUE;
 /**
  * @author Nardos Tessema
  *
- * A filter that stems English words into their
- * root terms using Porter algorithm.
+ * A filter that removes non-word characters.
  *
- * The Porter implementation is the one that is provided
- * by the instructor (from the official website of Porter Algorithm).
+ * A word character is defined as [a-zA-Z_0-9] (in Java, '\w').
  *
- * @see pipefilter.filter.Stemmer
- * @see <a href="https://tartarus.org/martin/PorterStemmer/index.html>Porter</a>
+ * The responsibility of this filter is too tiny that it doesn't
+ * deserve to be a filter by itself. In the second part of the project,
+ * I inted to merge this and other small tasks together.
+ * I made it a filter here just to demo the chaining of several filters.
  */
-public class PorterStemmer implements Filter<String, String> {
+public class NonAlphaNumericWordRemover implements Filter<String, String> {
 
     private final Pipe<String> input;
     private final Pipe<String> output;
     private final CountDownLatch doneSignal;
 
-    public PorterStemmer(Pipe<String> input, Pipe<String> output, CountDownLatch doneSignal) {
+    private static final String WORD_PATTERN = "\\w+";
+
+    public NonAlphaNumericWordRemover(Pipe<String> input, Pipe<String> output, CountDownLatch doneSignal) {
         this.input = input;
         this.output = output;
         this.doneSignal = doneSignal;
@@ -39,11 +41,12 @@ public class PorterStemmer implements Filter<String, String> {
                     output.put(SENTINEL_VALUE);
                     break;
                 }
-                Stemmer stemmer = new Stemmer();
-                stemmer.add(word.toCharArray(), word.length());
-                stemmer.stem();
-                final String stem = stemmer.toString();
-                output.put(stem);
+                /*
+                 * Discard if word does not match word pattern
+                 */
+                if(word.matches(WORD_PATTERN)) {
+                    output.put(word);
+                }
             } catch (InterruptedException ie) {
                 ie.printStackTrace();
             }

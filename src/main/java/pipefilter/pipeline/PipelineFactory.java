@@ -21,9 +21,9 @@ public class PipelineFactory {
          * know the exact types of input and output. So, the casting is safe.
          * i.e. @SuppressWarnings
          */
-        if(pipelineType.equalsIgnoreCase("first")) {
+        if(pipelineType.equalsIgnoreCase("serial")) {
             // TODO: check if input & output types are correct before building the pipeline.
-            return new TermFrequencyPipeline((String) input, (Map<String, Integer>) output, pipeline);
+            return new SerialPipeline((String) input, (Map<String, Integer>) output, pipeline);
         }
         throw new PipeFilterException("Unknown pipeline assembly: " + pipelineType);
     }

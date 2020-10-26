@@ -32,7 +32,9 @@ public class StopWordRemover implements Filter<String, String> {
         this.input = input;
         this.output = output;
         this.doneSignal = doneSignal;
-
+        /*
+         * Get the stop words to be removed.
+         */
         loadStopWords();
     }
 

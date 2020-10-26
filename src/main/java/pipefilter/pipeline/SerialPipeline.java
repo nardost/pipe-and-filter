@@ -14,9 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
-import static pipefilter.filter.FilterFactory.getFilterOutputType;
-import static pipefilter.pump.PumpFactory.getPumpOutputType;
-
 /**
  * The Pipeline class abstracts the entirety of the
  * Pump, Filter, Sink, Pipe arrangement as a list of
@@ -26,14 +23,14 @@ import static pipefilter.pump.PumpFactory.getPumpOutputType;
  * It is the single point where the pipeline operation
  * could be triggered.
  */
-public class TermFrequencyPipeline implements Pipeline {
+public class SerialPipeline implements Pipeline {
 
     private final String input;
     private final Map<String, Integer> output;
     private final List<Thread> pipelineComponents;
     private final CountDownLatch doneSignal;
 
-    public TermFrequencyPipeline(String input, Map<String, Integer> output, String[] pipeline) {
+    public SerialPipeline(String input, Map<String, Integer> output, String[] pipeline) {
 
         this.input = input;
         this.output = output;
@@ -76,7 +73,7 @@ public class TermFrequencyPipeline implements Pipeline {
          * Create pump and attach to pipeline
          */
         String name = components[0];
-        String pipeDataType = getPumpOutputType(name);
+        String pipeDataType = PumpFactory.getPumpOutputType(name);
 
         Pipe<?> out = PipeFactory.build(pipeDataType);
         Pipe<?> in = out;
@@ -84,11 +81,13 @@ public class TermFrequencyPipeline implements Pipeline {
         pipelineComponents.add(new Thread(pump));
 
         /*
-         * Create filters and attach to pipeline
+         * Create a chain of filters.
+         * Output pipe of pump is input pipe of first filter.
+         * Output pipe of first filter is input pipe of second filter, and so on...
          */
         for(int i = 1; i <= components.length - 2; i++) {
             name = components[i];
-            pipeDataType = getFilterOutputType(name);
+            pipeDataType = FilterFactory.getFilterOutputType(name);
             out = PipeFactory.build(pipeDataType);
             Filter<?, ?> filter = FilterFactory.build(name, in, out, doneSignal);
             pipelineComponents.add(new Thread(filter));

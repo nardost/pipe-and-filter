@@ -9,7 +9,7 @@ import java.util.concurrent.CountDownLatch;
 import static pipefilter.config.Configuration.SENTINEL_VALUE;
 
 /**
- * A stemmer filter.
+ * A filter that stems English words into their root terms.
  *
  * This filter uses the Apache Open NLP implementation of the
  * Porter stemming algorithm to stem words.
@@ -17,10 +17,11 @@ import static pipefilter.config.Configuration.SENTINEL_VALUE;
  * This filter is written as an alternative to the one that
  * uses the Porter implementation downloaded from Porter's homepage.
  *
- * I haven't seen any difference in the outputs of the two so far.
- * I believe this one is more dependable than a copy-pasted code.
+ * I haven't seen any differences in the outputs of the two so far.
+ * However, ...
+ * I believe this one is more dependable than a copy-pasted code because it:
  *       - comes from the reputed Apache OpenNLP project (tested, etc...)
- *       - dependency is introduced in the code base properly (the Maven way)
+ *       - introduces dependency in the code base properly (the Maven way)
  *
  * The maven dependency is:
  *

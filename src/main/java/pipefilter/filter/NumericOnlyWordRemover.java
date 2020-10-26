@@ -9,24 +9,23 @@ import static pipefilter.config.Configuration.SENTINEL_VALUE;
 /**
  * @author Nardos Tessema
  *
- * A filter that removes non-word characters.
+ * A filter that removes numeric only words.
  *
- * A word character is defined as [a-zA-Z_0-9] (in Java, '\w').
+ * Removes words that are composed purely of numeric characters.
+ * It does not remove words with a mixture of alphabetic and numeric characters.
  *
- * The responsibility of this filter is too tiny that it doesn't
- * deserve to be a filter by itself. In the second part of the project,
- * I inted to merge this and other small tasks together.
- * I made it a filter here just to demo the chaining of several filters.
+ * Removes: 1, 480, 001
+ * Does not remove: SE480, God101, P2P
  */
-public class NonWordCharacterCleaner implements Filter<String, String> {
+public class NumericOnlyWordRemover implements Filter<String, String> {
 
     private final Pipe<String> input;
     private final Pipe<String> output;
     private final CountDownLatch doneSignal;
 
-    private static final String WORD_PATTERN = "\\w+";
+    private final String WORD_PATTERN = "\\d+";
 
-    public NonWordCharacterCleaner(Pipe<String> input, Pipe<String> output, CountDownLatch doneSignal) {
+    public NumericOnlyWordRemover(Pipe<String> input, Pipe<String> output, CountDownLatch doneSignal) {
         this.input = input;
         this.output = output;
         this.doneSignal = doneSignal;
@@ -41,13 +40,10 @@ public class NonWordCharacterCleaner implements Filter<String, String> {
                     output.put(SENTINEL_VALUE);
                     break;
                 }
-                /*
-                 * Discard if word does not match word pattern
-                 */
-                if(word.matches(WORD_PATTERN)) {
+                if(!word.matches(WORD_PATTERN)) {
                     output.put(word);
                 }
-            } catch (InterruptedException ie) {
+            } catch(InterruptedException ie) {
                 ie.printStackTrace();
             }
         }

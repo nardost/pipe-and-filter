@@ -1,12 +1,13 @@
 package pipefilter.config;
 
 import pipefilter.filter.Filter;
+import pipefilter.filter.NumericOnlyWordRemover;
 import pipefilter.filter.OpenNLPStemmer;
 import pipefilter.filter.PorterStemmer;
 import pipefilter.filter.StopWordRemover;
 import pipefilter.filter.ToLowerCaseTransformer;
 import pipefilter.filter.WordBoundaryTokenizer;
-import pipefilter.filter.NonWordCharacterCleaner;
+import pipefilter.filter.NonAlphaNumericWordRemover;
 import pipefilter.pump.FakePump;
 import pipefilter.pump.Pump;
 import pipefilter.pump.TextFilePump;
@@ -31,7 +32,8 @@ public class Registry {
 
     static {
         registeredFilters.put("tokenizer", WordBoundaryTokenizer.class);
-        registeredFilters.put("non-word-char-cleaner", NonWordCharacterCleaner.class);
+        registeredFilters.put("non-alphanumeric-word-remover", NonAlphaNumericWordRemover.class);
+        registeredFilters.put("numeric-only-word-remover", NumericOnlyWordRemover.class);
         registeredFilters.put("to-lower-case-transformer", ToLowerCaseTransformer.class);
         registeredFilters.put("stop-word-remover", StopWordRemover.class);
         registeredFilters.put("opennlp-porter-stemmer", OpenNLPStemmer.class);

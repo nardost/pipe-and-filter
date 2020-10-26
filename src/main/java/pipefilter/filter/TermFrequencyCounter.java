@@ -8,6 +8,11 @@ import java.util.concurrent.CountDownLatch;
 
 import static pipefilter.config.Configuration.SENTINEL_VALUE;
 
+/**
+ * @author Nardos Tessema
+ *
+ * A filter that counts the number of occurence of terms.
+ */
 public class TermFrequencyCounter implements Filter<String, TermFrequency> {
 
     private final Pipe<String> input;
@@ -15,7 +20,7 @@ public class TermFrequencyCounter implements Filter<String, TermFrequency> {
     private final CountDownLatch doneSignal;
 
     /**
-     * A map of terms already counted.
+     * A map of terms that have already occurred and been counted.
      * The key is the term and the value is the count.
      */
     private final Map<String, Integer> countedTerms = new HashMap<>();
@@ -33,8 +38,8 @@ public class TermFrequencyCounter implements Filter<String, TermFrequency> {
                 final String word = input.take();
                 TermFrequency tf = new TermFrequency();
                 /*
-                 * If input is the sentinel value, construct
-                 * a TermFrequency object with term = SENTINEL_VALUE
+                 * If input is the sentinel value, construct a
+                 * TermFrequency object with term = SENTINEL_VALUE
                  * and put it in the output to signal the end of stream.
                  */
                 if(word.equals(SENTINEL_VALUE)) {
@@ -43,9 +48,12 @@ public class TermFrequencyCounter implements Filter<String, TermFrequency> {
                     break;
                 }
                 /*
-                 * If term has already been counted before, increment
-                 * its frequency by 1. If word is new, set frequency to 1.
-                 * Put the term into the map of counted terms.
+                 * - If term is new, set frequency to 1.
+                 * - If term has occurred before, increment frequency by 1.
+                 * - Put the term into the map of already encountered terms.
+                 *   Note: putting an entry in a map:
+                 *         * creates a new entry if the key does not exist.
+                 *         * updates the value if the key exists in the map.
                  */
                 final int frequency = countedTerms.getOrDefault(word, 0);
                 tf.term = word;
