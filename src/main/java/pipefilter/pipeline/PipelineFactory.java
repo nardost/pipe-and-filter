@@ -42,6 +42,14 @@ public class PipelineFactory {
         pipeTypesMatch(pipeline);
     }
 
+    /**
+     * Check if the named components are in the registry.
+     *
+     * Throws an exception if any of the names is not
+     * registered in the registry.
+     *
+     * @param pipeline the pipeline assembly array
+     */
     private static void componentsAreRegistered(String[] pipeline) {
 
         if(!registeredPumps.containsKey(pipeline[0])) {
@@ -59,6 +67,15 @@ public class PipelineFactory {
         }
     }
 
+    /**
+     * Check if the output pipe type of a component matches with
+     * the input pipe type of the next component in the pipeline chain.
+     *
+     * Throws an exception if output/input pipe types of adjacent
+     * pipeline component do not match.
+     *
+     * @param pipeline the piepline assembly
+     */
     private static void pipeTypesMatch(String[] pipeline) {
         String out = PumpFactory.getPumpOutputType(pipeline[0]);
         String in;

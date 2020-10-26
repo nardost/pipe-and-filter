@@ -23,7 +23,7 @@ public class ToLowerCaseTransformerFilterTest {
     public void init() {
 
         /*
-         * mock configuration values.
+         * mock configuration values
          */
         SENTINEL_VALUE = "$$$";
         PIPE_CAPACITY = 40;

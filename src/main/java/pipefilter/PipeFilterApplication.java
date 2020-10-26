@@ -14,7 +14,7 @@ public class PipeFilterApplication {
 
     /**
      * The output of the frequency-term-inverter sink.
-     * TODO: Choice between HashMap and TreeMap
+     * TODO: Choose between HashMap & TreeMap.
      */
     private static final Map<Integer, List<String>> frequencies = new TreeMap<>(Collections.reverseOrder());
     /**

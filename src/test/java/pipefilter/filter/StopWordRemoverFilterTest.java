@@ -22,7 +22,7 @@ public class StopWordRemoverFilterTest {
     public void init() {
 
         /*
-         * mock configuration values.
+         * mock configuration values
          */
         SENTINEL_VALUE = "$$$";
         PIPE_CAPACITY = 40;

@@ -23,7 +23,7 @@ public class NumericOnlyWordRemoverFilterTest {
     public void init() {
 
         /*
-         * configure system for test
+         * mock configuration values
          */
         SENTINEL_VALUE = "$$$";
         PIPE_CAPACITY = 20;

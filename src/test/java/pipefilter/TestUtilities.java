@@ -52,6 +52,11 @@ public class TestUtilities {
         return result.toString().split(",");
     }
 
+    /**
+     * Gets items in a pipe as an array
+     * @param pipe contains Data items
+     * @return array of Data items
+     */
     public static Data[] pipeToArrayOfData(Pipe<?> pipe) {
         List<Data> list = new ArrayList<>();
         Data item = null;
@@ -64,6 +69,5 @@ public class TestUtilities {
             list.add(item);
         } while(!Objects.requireNonNull(item).isSentinelValue());
         return list.toArray(new Data[0]);
-
     }
 }
