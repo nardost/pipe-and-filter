@@ -25,8 +25,8 @@ import java.util.concurrent.CountDownLatch;
  */
 public class SerialPipeline implements Pipeline {
 
-    private final String input;
-    private final Map<String, Integer> output;
+    private String input;
+    private Map<String, Integer> output;
     private final List<Thread> pipelineComponents;
     private final CountDownLatch doneSignal;
 

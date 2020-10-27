@@ -10,6 +10,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+/**
+ * @author Nardos Tessema
+ *
+ * A Pipe & Filter Architecture
+ *
+ * The application is a text processing pipeline.
+ *
+ * The user of this application can compose a pipeline
+ * using the available pumps, filters, and sinks.
+ *
+ * It was designed in such a way that enables the user
+ * to choose which components to use in a pipeline.
+ */
 public class PipeFilterApplication {
 
     /**
@@ -33,7 +46,7 @@ public class PipeFilterApplication {
                     "numeric-only-word-remover",
                     "to-lower-case-transformer",
                     "stop-word-remover",
-                    "porter-stemmer",
+                    "en-porter-stemmer",
                     "term-frequency-counter",
                     "frequency-term-inverter"
             };
@@ -47,17 +60,15 @@ public class PipeFilterApplication {
             /*
              * Run the pipeline
              */
+            long start = System.currentTimeMillis();
             pipeline.run();
+            long elapsedTime = System.currentTimeMillis() - start;
+            System.out.printf("Time taken to process %s: %d ms%n", text, elapsedTime);
             /*
              * At this point, all the threads have finished their jobs.
              *  - guaranteed by the CountDownLatch signal.
              */
 
-            final int N_MOST_COMMON = 10;
-            Map<Integer, List<String>> mostCommon = Utilities.mostCommonTerms(frequencies, N_MOST_COMMON);
-            Map<Integer, List<String>> trimmedAndSorted = Utilities.trim(frequencies);
-            //System.out.println(Utilities.prettyPrintMap(frequencies));
-            System.out.println(Utilities.prettyPrintMap(mostCommon));
         } catch (PipeFilterException pfe) {
             System.out.println(pfe.getMessage());
         }

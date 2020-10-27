@@ -1,5 +1,6 @@
 package pipefilter.sink;
 
+import pipefilter.Utilities;
 import pipefilter.filter.TermFrequency;
 import pipefilter.pipe.Pipe;
 
@@ -92,5 +93,11 @@ public class FrequencyTermInverter implements Sink<TermFrequency, Map<Integer, L
     public void run() {
         drain();
         doneSignal.countDown();
+        final int N_MOST_COMMON = 10;
+        Map<Integer, List<String>> mostCommon = Utilities.mostCommonTerms(output, N_MOST_COMMON);
+        Map<Integer, List<String>> trimmedAndSorted = Utilities.trim(output);
+        //System.out.println(Utilities.prettyPrintMap(frequencies));
+        // System.out.println(Utilities.prettyPrintMap(mostCommon));
+        System.out.println(Utilities.prettyPrintMap(mostCommon));
     }
 }

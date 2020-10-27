@@ -36,7 +36,7 @@ public class Registry {
         registeredFilters.put("to-lower-case-transformer", ToLowerCaseTransformer.class);
         registeredFilters.put("stop-word-remover", StopWordRemover.class);
         registeredFilters.put("opennlp-porter-stemmer", OpenNLPStemmer.class);
-        registeredFilters.put("porter-stemmer", PorterStemmer.class);
+        registeredFilters.put("en-porter-stemmer", PorterStemmer.class);
         registeredFilters.put("term-frequency-counter", pipefilter.filter.TermFrequencyCounter.class);
     }
 

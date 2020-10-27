@@ -52,7 +52,7 @@ public class TextFilePumpTest {
     }
 
     @Test
-    public void textFilePumpReadsInputFileStreamsTheLinesAppendsSentinelValue() {
+    public void pumpReadsLinesOfTextFromFileAndStreamsToPipeAndAppendsSentinelValue() {
         final String[] expected = new String[] {
                 "the first line",
                 "the second line",
