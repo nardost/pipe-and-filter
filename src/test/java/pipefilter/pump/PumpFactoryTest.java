@@ -39,6 +39,6 @@ public class PumpFactoryTest {
                         "non-existent-file.txt",
                         PipeFactory.build("java.lang.String"),
                         new CountDownLatch(1)))
-                .hasMessageContaining("exception while building pump");
+                .hasMessageContaining("while building pump");
     }
 }

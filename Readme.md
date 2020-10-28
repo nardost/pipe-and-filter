@@ -58,7 +58,7 @@ The ```Pipe``` types the ```PipeFactory``` is currently aware of are:
 4. java.lang.Double (not used in this application)
 ```
 
-The buffer capacity of pipes is configurable with the global PIPE\_CAPACITY configuration parameter.
+The buffer capacity of pipes is configurable with the global ```PIPE_CAPACITY``` configuration parameter.
 
 #### 3.2 Pump
 
@@ -147,7 +147,7 @@ A ```Pipeline``` factory takes the _input_, the _output_, the _ordered list of `
 
 **Implemented pipelines**
 
-There is currently only one type of ```Pipeline``` assembly, serial, implemented by the SerialPipeline class, where components are assembled in a single sequential chain.
+There is currently only one type of ```Pipeline``` assembly, ```serial```, implemented by the ```SerialPipeline``` class, where components are assembled in a single sequential chain.
 
 ### 4. The Registry
 

@@ -35,7 +35,7 @@ public class PumpFactory {
         } catch (IllegalAccessException iae) {
             throw new PipeFilterException("Illegal access exception while building pump " + name);
         } catch (InvocationTargetException ite) {
-            throw new PipeFilterException("Invocation target exception while building pump " + name);
+            throw new PipeFilterException("ERROR while building pump - check if input file exists:  " + input);
         } catch (InstantiationException ie) {
             throw new PipeFilterException("Instantiation exception while building pump " + name);
         } catch (NullPointerException npe) {
