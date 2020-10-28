@@ -5,13 +5,13 @@ import pipefilter.filter.NumericOnlyWordRemover;
 import pipefilter.filter.OpenNLPStemmer;
 import pipefilter.filter.PorterStemmer;
 import pipefilter.filter.StopWordRemover;
+import pipefilter.filter.TermFrequencyCounter;
 import pipefilter.filter.ToLowerCaseTransformer;
 import pipefilter.filter.WordBoundaryTokenizer;
 import pipefilter.filter.NonAlphaNumericWordRemover;
 import pipefilter.pump.Pump;
 import pipefilter.pump.TextFilePump;
 import pipefilter.sink.Sink;
-import pipefilter.sink.TermFrequencyCounter;
 import pipefilter.sink.FrequencyTermInverter;
 
 import java.util.HashMap;
@@ -37,7 +37,7 @@ public class Registry {
         registeredFilters.put("stop-word-remover", StopWordRemover.class);
         registeredFilters.put("opennlp-porter-stemmer", OpenNLPStemmer.class);
         registeredFilters.put("en-porter-stemmer", PorterStemmer.class);
-        registeredFilters.put("term-frequency-counter", pipefilter.filter.TermFrequencyCounter.class);
+        registeredFilters.put("term-frequency-counter", TermFrequencyCounter.class);
     }
 
     /**
@@ -55,7 +55,7 @@ public class Registry {
     public static final Map<String, Class<? extends Sink<?, ?>>> registeredSinks = new HashMap<>();
 
     static  {
-        registeredSinks.put("frequency-counter", TermFrequencyCounter.class);
+        // registeredSinks.put("frequency-counter", TermFrequencyCounter.class);
         registeredSinks.put("frequency-term-inverter", FrequencyTermInverter.class);
     }
 }

@@ -14,7 +14,7 @@ public class Configuration {
      *  - Same for all pipes
      *  - Value arbitrarily chosen for now
      */
-    public static int PIPE_CAPACITY = 800;
+    public static int PIPE_CAPACITY = 100;
     /**
      * Stop words
      */

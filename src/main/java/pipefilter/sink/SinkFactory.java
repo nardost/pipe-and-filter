@@ -38,6 +38,8 @@ public class SinkFactory {
             throw new PipeFilterException("Invocation target exception while building sink " + name);
         } catch (InstantiationException ie) {
             throw new PipeFilterException("Instantiation exception while building sink " + name);
+        } catch(NullPointerException npe) {
+            throw new PipeFilterException("Sink not found in the registry: " + name);
         }
     }
 

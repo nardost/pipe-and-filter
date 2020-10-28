@@ -18,7 +18,7 @@ public class PipelineCompositionTest {
                 "text-streamer",
                 "term-frequency-counter",
                 "stop-word-remover",
-                "frequency-counter"
+                "frequency-term-inverter"
         };
         assertThatThrownBy(() -> PipelineFactory.build("", new HashMap<>(), assembly, "serial"))
                 .hasMessageContaining("Pipe mismatch");

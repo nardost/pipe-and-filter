@@ -2,8 +2,6 @@
 # A Text Processing Application
 ## (Pipe-and-Filter Architectural Pattern)
 
-Github Repository: [_https://github.com/nardost/pipe-and-filter_](https://github.com/nardost/pipe-and-filter)
-
 ### 1. What it Does
 
 1. Reads a text file line by line
@@ -158,25 +156,24 @@ Each implemented Pump, Filter, or ```Sink``` is registered in a central Registry
 | **UNIQUE IDENTIFIER** | **CLASS** | **TYPE** |
 | --- | --- | --- |
 | ```tokenizer``` | ```WordBoundaryTokenizer``` | ```Filter``` |
-| ```non-alphanumeric-word-remover``` | ```NonAlphaNumericWordRemover``` |
-| ```numeric-only-word-remover``` | ``NumericOnlyWordRemover`` |
-| ```to-lower-case-transformer``` | ```ToLowerCaseTransformer``` |
-| ```stop-word-remover``` | ```StopWordRemover``` |
-| ```opennlp-porter-stemmer``` | ```OpenNLPStemmer``` |
-| ```en-porter-stemmer``` | ```PorterStemmer``` |
-| ```term-frequency-counter``` | ```pipefilter.filter.TermFrequencyCounter``` |
-| ```text-streamer``` | T```extFilePump``` | ```Pump``` |
-| ```frequency-counter``` | ```TermFrequencyCounter``` | ```Sink``` |
-| ```frequency-term-inverter``` | ```FrequencyTermInverter``` |
+| ```non-alphanumeric-word-remover``` | ```NonAlphaNumericWordRemover``` | ```Filter``` |
+| ```numeric-only-word-remover``` | ``NumericOnlyWordRemover`` | ```Filter``` |
+| ```to-lower-case-transformer``` | ```ToLowerCaseTransformer``` | ```Filter``` |
+| ```stop-word-remover``` | ```StopWordRemover``` | ```Filter``` |
+| ```opennlp-porter-stemmer``` | ```OpenNLPStemmer``` | ```Filter``` |
+| ```en-porter-stemmer``` | ```PorterStemmer``` | ```Filter``` |
+| ```term-frequency-counter``` | ```TermFrequencyCounter``` | ```Filter``` |
+| ```text-streamer``` | ```TextFilePump``` | ```Pump``` |
+| ```frequency-term-inverter``` | ```FrequencyTermInverter``` | ```Sink``` |
 
 
 #### 4.2 Importance of the Registry
 
-PumpFactory, FilterFactory, ```SinkFactory``` use the Registry to build components dynamically using the Java reflection API. These factories also use the Registry to infer the input and the output types of each registered pump, filter, or sink.
+```PumpFactory```, ```FilterFactory```, ```SinkFactory``` use the Registry to build components dynamically using the Java reflection API. These factories also use the ```Registry``` to infer the input and the output types of each registered pump, filter, or sink.
 
 A factory consults the registry and knows the class type. It then accesses the single constructor of that class type and instantiates an object of that class type by reflection.
 
-PiplineFactory uses the Registry to check if a given ```Pipeline``` assembly is valid. The user supplied ordered list of components is a valid ```Pipeline``` assembly if and only if the output type of a ```Pipeline``` component is the same as the input type of the next component in the chain for every pair of adjacent components in the list.
+```PiplineFactory``` uses the ```Registry``` to check if a given ```Pipeline``` assembly is valid. The user supplied ordered list of components is a valid ```Pipeline``` assembly if and only if the output type of a ```Pipeline``` component is the same as the input type of the next component in the chain for every pair of adjacent components in the list.
 
 ### 5. The Text Processing Pipeline
 
@@ -198,7 +195,7 @@ The ```Pipeline``` assembly for the text processor that does the functions liste
 ```
 ### 6. Configuration
 
-All configuration parameters are public class variables of the Configuration class.
+All configuration parameters are public class variables of the ```Configuration``` class.
 
 | **PARAMETER** | **DESCRIPTION** |
 | --- | --- |
@@ -217,4 +214,4 @@ All configuration parameters are public class variables of the Configuration cla
 | All Sinks | ```pipefilter.sink``` |
 | Pipes | ```pipefilter.pipe``` |
 | Pipelines | ```pipefilter.pipeline``` |
-| PipeFilterException | ```pipefilter.exception``` |
+| Custom exceptions | ```pipefilter.exception``` |
