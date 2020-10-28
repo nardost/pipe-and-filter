@@ -33,6 +33,7 @@ public class TermFrequencyCounter implements Filter<String, TermFrequency> {
 
     @Override
     public void filter() {
+        long start = System.currentTimeMillis();
         while(true) {
             try {
                 final String word = input.take();
@@ -64,6 +65,8 @@ public class TermFrequencyCounter implements Filter<String, TermFrequency> {
                 ie.printStackTrace();
             }
         }
+        long elapsedTime = System.currentTimeMillis() - start;
+        // System.out.printf("%1$-30s%2$9d%n", "term-frequency-counter", elapsedTime);
     }
 
     @Override

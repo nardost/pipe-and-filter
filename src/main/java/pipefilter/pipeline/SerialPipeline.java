@@ -47,6 +47,14 @@ public class SerialPipeline implements Pipeline {
          * Wait for all threads to be done before returning to the main thread.
          */
         doneSignal.await();
+        /*
+         * At this point, it is guaranteed that all the threads
+         * (the pump, the filters, and the sink) have completed
+         * their operations (threads have stopped), meaning that
+         * the text processing has completed.
+         *
+         * This is guaranteed by the countdown latch.
+         */
     }
 
     /**

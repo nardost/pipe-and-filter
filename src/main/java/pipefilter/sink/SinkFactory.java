@@ -10,8 +10,22 @@ import java.util.concurrent.CountDownLatch;
 
 import static pipefilter.config.Registry.registeredSinks;
 
+/**
+ * @author Nardos Tessema
+ *
+ * A factory that creates Sink objects
+ */
 public class SinkFactory {
 
+    /**
+     * @param name the unique identifier of the Sink implementation
+     * @param pipe the input pipe of the sink
+     * @param output the output of the sink (the data structure that holds the final results)
+     * @param signal the countdown latch to signal completion of draining.
+     * @param <T> the input type
+     * @param <U> the output type
+     * @return a Sink object
+     */
     public static <T, U> Sink<T, U> build(String name, Pipe<T> pipe, U output, CountDownLatch signal) {
         Class<?> c = registeredSinks.get(name);
         try {

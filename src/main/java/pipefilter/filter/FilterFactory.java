@@ -14,19 +14,28 @@ import static pipefilter.config.Registry.registeredFilters;
  * @author Nardos Tessema
  *
  * FilterFactory creates filters by reflection (dynamically).
- * The list of defined filters is available to the factory.
- * It uses the list to determine which particular Filter to create.
+ * The list of defined filters is available in the Registry.
+ * It uses the Registry to determine which particular Filter to create.
  *
  * A Filter of type Filter<T, U> is expected to have a single
  * constructor with the following signature:
  *
- * public TheOnlyConstructor(Pipe<T> input, Pipe<U> output, CountDownLatch countdown);
+ * public TheOnlyConstructor(Pipe<T> input, Pipe<U> output, CountDownLatch signal);
  *
  * This constraint is important for the factory to be able to create
  * Filters dynamically by reflection.
  */
 public class FilterFactory {
 
+    /**
+     * @param name the unique identifier of the Filter implementation
+     * @param input the input Pipe
+     * @param output the output Pipe
+     * @param signal the countdown latch to signal completion of filtering
+     * @param <T> the input type of the Filter
+     * @param <U> the output type of the Filter
+     * @return a Filter object
+     */
     public static <T, U> Filter<T, U> build(String name, Pipe<T> input, Pipe<U> output, CountDownLatch signal) {
         Class<?> c = registeredFilters.get(name);
         try {

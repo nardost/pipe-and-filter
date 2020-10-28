@@ -7,6 +7,11 @@ import java.util.concurrent.CountDownLatch;
 
 import static pipefilter.config.Configuration.*;
 
+/**
+ * A Sink implementation that counts the occurrence frequency of terms.
+ * This Sink is not used in this application. It is implemented for experiments.
+ * If can be used to answer queries like, "How many times does a term occur?"
+ */
 public class TermFrequencyCounter implements Sink<String, Map<String, Integer>>, Runnable {
 
     private final Pipe<String> pipe;

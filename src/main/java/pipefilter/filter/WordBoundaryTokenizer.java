@@ -33,6 +33,7 @@ public class WordBoundaryTokenizer implements Filter<String, String> {
 
     @Override
     public void filter() {
+        long start = System.currentTimeMillis();
         while(true) {
             try {
                 final String line = input.take();
@@ -51,6 +52,8 @@ public class WordBoundaryTokenizer implements Filter<String, String> {
                 ie.printStackTrace();
             }
         }
+        long elapsedTime = System.currentTimeMillis() - start;
+        // System.out.printf("%1$-30s%2$9d%n", "word-boundary-tokenizer", elapsedTime);
     }
 
     @Override

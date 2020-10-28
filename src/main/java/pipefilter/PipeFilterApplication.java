@@ -19,26 +19,34 @@ import java.util.TreeMap;
  *
  * The user of this application can compose a pipeline
  * using the available pumps, filters, and sinks.
- *
- * It was designed in such a way that enables the user
- * to choose which components to use in a pipeline.
  */
 public class PipeFilterApplication {
 
     /**
      * The output of the frequency-term-inverter sink.
-     * TODO: Choose between HashMap & TreeMap.
+     *
+     * The choice between HashMap & TreeMap:
+     *
+     * HashMap: keys are sorted in ascending order
+     * TreeMap (with reverse order comparator): keys are sorted in reverse order.
+     *
+     * Since listing the N most commonly occurring terms is the goal,
+     * a TreeMap that sorts keys in reverse order should be our choice.
      */
-    private static final Map<Integer, List<String>> frequencies = new TreeMap<>(Collections.reverseOrder());
+    private static final Map<Integer, List<String>> frequencies =  new TreeMap<>(Collections.reverseOrder());
+
     /**
-     * The output of the frequency-counter sink.
+     * The output of the frequency-counter sink (not used).
      */
-    private static final  Map<String, Integer> terms = new HashMap<>();
+    private static final  Map<String, Integer> terms = new TreeMap<>();
 
     public static void main(String[] args) throws InterruptedException {
 
         try {
+            // Get the input file path
             final String text = parseCommandLineArguments(args);
+
+            // The components that make up the pipeline (in that order)
             final String[] assembly = new String[] {
                     "text-streamer",
                     "tokenizer",
@@ -51,24 +59,21 @@ public class PipeFilterApplication {
                     "frequency-term-inverter"
             };
 
-            /*
-             * Construct the pipeline. There is only
-             * one type of pipeline for now - first.
-             */
+            // What type of pipeline? (Only serial available)
             final String pipelineType = "serial";
+
+            // Construct the pipeline.
             final Pipeline pipeline = PipelineFactory.build(text, frequencies, assembly, pipelineType);
-            /*
-             * Run the pipeline
-             */
+
+            // Start the pipeline (with timing instrumentation code)
             long start = System.currentTimeMillis();
             pipeline.run();
             long elapsedTime = System.currentTimeMillis() - start;
-            System.out.printf("Time taken to process %s: %d ms%n", text, elapsedTime);
-            /*
-             * At this point, all the threads have finished their jobs.
-             *  - guaranteed by the CountDownLatch signal.
-             */
-
+            final String message = "Time taken to process";
+            final int N = message.length() + text.length() + 2;
+            System.out.printf("%1$" + N + "s%2$s%3$10s%n", "", "┌", "┐");
+            System.out.printf("%s %s: %d ms%n", message, text, elapsedTime);
+            System.out.printf("%1$" + N + "s%2$s%3$10s%n", "", "└", "┘");
         } catch (PipeFilterException pfe) {
             System.out.println(pfe.getMessage());
         }

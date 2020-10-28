@@ -9,17 +9,35 @@ import java.util.Map;
 
 import static pipefilter.config.Registry.*;
 
+/**
+ * A factory that creates Pipeline objects.
+ *
+ * The creation logic of each pipeline type is hard-coded.
+ * i.e. this is not a dynamic factory like FilterFactory, PumpFactory, SinkFactory.
+ */
 public class PipelineFactory {
 
+    /**
+     * @param input the input to the pipeline
+     * @param output the output of the pipeline
+     * @param pipeline the ordered list of components that make up the pipeline
+     * @param pipelineType they type of pipeline (serial, parallel, etc.)
+     * @param <T> the input type
+     * @param <U> the output type
+     * @return a Pipeline object
+     */
     @SuppressWarnings("unchecked")
     public static <T, U> Pipeline build(T input, U output, String[] pipeline, String pipelineType) {
 
+        /*
+         * (1) check if the user supplied compatible sequence of components
+         * (2) check if the components are registered in the Registry
+         */
         validate(pipeline);
 
         /*
-         * We are hard-coding the creation logic for each pipeline type, and we
-         * know the exact types of input and output. So, the casting is safe.
-         * i.e. @SuppressWarnings
+         * We know the exact types of input and output.
+         * So, the casting is safe. i.e. @SuppressWarnings
          */
         if(pipelineType.equalsIgnoreCase("serial")) {
             // TODO: check if input & output types are correct before building the pipeline.
@@ -74,7 +92,7 @@ public class PipelineFactory {
      * Throws an exception if output/input pipe types of adjacent
      * pipeline component do not match.
      *
-     * @param pipeline the piepline assembly
+     * @param pipeline the pipeline assembly (array of component ids).
      */
     private static void pipeTypesMatch(String[] pipeline) {
         String out = PumpFactory.getPumpOutputType(pipeline[0]);

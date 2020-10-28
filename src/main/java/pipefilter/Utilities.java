@@ -15,6 +15,80 @@ import java.util.TreeMap;
  * Utility methods
  */
 public class Utilities {
+
+    /**
+     * The pipeline output map key set contains all numbers ranging
+     * from the minimum to the maximum occurrence frequencies
+     * even if there are no terms with some frequencies in the range.
+     *
+     * This method removes frequency-term map entries with empty lists as the values.
+     */
+    public static Map<Integer, List<String>> trim(Map<Integer, List<String>> original) {
+        Map<Integer, List<String>> trimmed = new TreeMap<>(Collections.reverseOrder());
+        for(int f : original.keySet()) {
+            if(!original.get(f).isEmpty()) {
+                trimmed.put(f, original.get(f));
+            }
+        }
+        return trimmed;
+    }
+
+    /**
+     * Return the n most commonly occurring terms.
+     * If there are ties, sort in alphabetical order.
+     *
+     * This method is needed in case the data structure used
+     * to store the output of the Sink is a HashMap. in which case
+     * the keys of the output Map are sorted in natural order.
+     *
+     * If a TreeMap with reverse order comparator is used instead,
+     * this method is not necessary as the key entries will already
+     * have be sorted in reverse order.
+     *
+     * (1) Traverse to the last entry in the Map
+     * (2) Iterate backwards times and collect all
+     *     entries with non-empty list of terms
+     * (3) Stop when n non-empty entries are collected
+     *
+     * @param n the number of frequencies to display.
+     * @return a map with the n most commonly occurring terms
+     */
+    public static Map<Integer, List<String>> mostCommonTerms(
+            Map<Integer, List<String>> frequencies,
+            final int n) {
+
+        final int maximumFrequency = frequencies
+                .keySet()
+                .stream()
+                .max(Integer::compareTo)
+                .orElse(0);
+
+        final SortedMap<Integer, List<String>> mostFrequentTerms = new TreeMap<>(Collections.reverseOrder());
+        int i = 0;
+        do {
+            final List<String> l = frequencies.get(maximumFrequency - i);
+            /*
+             * There might not be n frequency categories,
+             * in which case l becomes null...
+             */
+            if(Objects.isNull(l)) {
+                break;
+            }
+            /*
+             * If the list is empty, skip it.
+             */
+            if(!l.isEmpty()) {
+                /*
+                 * Sort in alphabetical order
+                 */
+                Collections.sort(l);
+                mostFrequentTerms.put(maximumFrequency - i, l);
+            }
+            i++;
+        } while(mostFrequentTerms.size() < n);
+        return mostFrequentTerms;
+    }
+
     /**
      * A generic method that stringifies the contents of a collection.
      * The toString() method of the objects inside the collection is used.
@@ -62,52 +136,6 @@ public class Utilities {
             sb.append("\n");
         });
         return sb.toString();
-    }
-
-    /**
-     * Removes empty lists from the frequency-term map.
-     */
-    public static Map<Integer, List<String>> trim(Map<Integer, List<String>> original) {
-        Map<Integer, List<String>> trimmed = new TreeMap<>(Collections.reverseOrder());
-        for(int f : original.keySet()) {
-            if(!original.get(f).isEmpty()) {
-                trimmed.put(f, original.get(f));
-            }
-        }
-        return trimmed;
-    }
-    /**
-     * Display the n most commonly occurring terms.
-     * If there are ties, sort in alphabetical order.
-     *
-     * @param n the number of frequencies to display.
-     */
-    public static Map<Integer, List<String>> mostCommonTerms(Map<Integer, List<String>> frequencies, final int n) {
-        final int maximumFrequency = frequencies.keySet().stream().max(Integer::compareTo).orElse(0);
-        final SortedMap<Integer, List<String>> mostFrequentTerms = new TreeMap<>(Collections.reverseOrder());
-        int i = 0;
-        do {
-            final List<String> l = frequencies.get(maximumFrequency - i);
-            /*
-             * There might not be n frequency categories,
-             * in which case l becomes null...
-             */
-            if(Objects.isNull(l)) {
-                break;
-            }
-            /*
-             * If the list is empty, skip it.
-             */
-            if(!l.isEmpty()) {
-                /*
-                 * Sort in alphabetical order
-                 */
-                Collections.sort(l);
-                mostFrequentTerms.put(maximumFrequency - i, l);
-            }
-            i++;
-        } while(mostFrequentTerms.size() < n);
-        return mostFrequentTerms;
     }
 
     /**

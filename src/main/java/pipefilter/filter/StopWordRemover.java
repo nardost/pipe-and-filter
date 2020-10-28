@@ -41,6 +41,7 @@ public class StopWordRemover implements Filter<String, String> {
 
     @Override
     public void filter() {
+        long start = System.currentTimeMillis();
         while(true) {
             try {
                 final String word = input.take();
@@ -58,6 +59,8 @@ public class StopWordRemover implements Filter<String, String> {
                 ie.printStackTrace();
             }
         }
+        long elapsedTime = System.currentTimeMillis() - start;
+        // System.out.printf("%1$-30s%2$9d%n", "stop-word-remover", elapsedTime);
     }
 
     @Override
