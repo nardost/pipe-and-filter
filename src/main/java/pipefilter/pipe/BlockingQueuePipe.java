@@ -2,6 +2,14 @@ package pipefilter.pipe;
 
 import java.util.concurrent.BlockingQueue;
 
+/**
+ * @author Nardos Tessema
+ *
+ * A Pipe implementation that uses a blocking queue
+ * as the underlying buffer data structure.
+ *
+ * @param <T> the type of the pipe
+ */
 public class BlockingQueuePipe<T> implements Pipe<T> {
 
     private final BlockingQueue<T> pipe;

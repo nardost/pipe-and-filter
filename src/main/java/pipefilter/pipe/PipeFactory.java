@@ -8,13 +8,17 @@ import java.util.concurrent.ArrayBlockingQueue;
 import static pipefilter.config.Configuration.PIPE_CAPACITY;
 
 /**
- * ArrayBlockingQueue is chosen as the pipe.
+ * @author Nardos Tessema
+ *
+ * ArrayBlockingQueue is chosen as the buffer.
  * The capacity of the pipes is configurable.
  *
  * @see pipefilter.config.Configuration
  *
- * The data type of the pipe comes as an input to the
- * factory method. There could be an entry for every conceivable data type.
+ * The data type of the pipe comes as an input to the factory method.
+ *
+ * There could be an entry for every conceivable data type.
+ *
  * I have defined only a few just to demonstrate the possibilities.
  */
 public class PipeFactory {

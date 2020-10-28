@@ -1,5 +1,10 @@
 package pipefilter.config;
 
+/**
+ * @author Nardos Tessema
+ *
+ * A central configuration class
+ */
 public class Configuration {
     /**
      * The sentinel value signals the end of the text stream.

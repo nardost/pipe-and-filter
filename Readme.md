@@ -123,11 +123,7 @@ A ```Sink``` factory uses the Java reflection API to build ```Sink``` objects. T
 - 2nd argument: Output data structure
 - 3rd argument: A countdown latch to signal completion of operations
 
-Implemented sinks:
-```
-1. FrequencyTermInverter
-2. TermFrequencyCounter (not used in this application)
-```
+Implemented sinks: ```FrequencyTermInverter```
 
 #### 3.5 Pipeline
 

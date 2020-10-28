@@ -9,6 +9,8 @@ import java.util.concurrent.CountDownLatch;
 import static pipefilter.config.Configuration.SENTINEL_VALUE;
 
 /**
+ * @author Nardos Tessema
+ *
  * A filter that stems English words into their root terms.
  *
  * This filter uses the Apache Open NLP implementation of the

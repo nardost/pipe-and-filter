@@ -10,6 +10,8 @@ import java.util.Map;
 import static pipefilter.config.Registry.*;
 
 /**
+ * @author Nardos Tessema
+ *
  * A factory that creates Pipeline objects.
  *
  * The creation logic of each pipeline type is hard-coded.

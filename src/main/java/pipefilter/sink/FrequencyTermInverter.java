@@ -109,14 +109,16 @@ public class FrequencyTermInverter implements Sink<TermFrequency, Map<Integer, L
         // Show the ten most frequently occurring terms
         final int N_MOST_COMMON = 10;
         System.out.printf("%nThe %d most commonly occurring terms:%n%n", N_MOST_COMMON);
-
+        System.out.printf("%1$6s----%2$s%n", "---------", "--------");
+        System.out.printf("%1$6s    %2$s%n", "FREQUENCY", "TERMS");
+        System.out.printf("%1$6s----%2$s%n", "---------", "--------");
         // If TreeMap with reverse order comparator is used for output
         output.keySet()
                 .stream()
                 .filter(k -> !output.get(k).isEmpty())
                 .limit(N_MOST_COMMON)
-                .forEach(k -> System.out.printf("%1$6d -> %2$s%n", k, Utilities.prettyPrint(output.get(k))));
-
+                .forEach(k -> System.out.printf("%1$9d -> %2$s%n", k, Utilities.prettyPrint(output.get(k))));
+        System.out.printf("%1$6s----%2$s%n", "---------", "--------");
         // If HashMap is used for the output
         // Map<Integer, List<String>> mostCommon = Utilities.mostCommonTerms(output, N_MOST_COMMON);
         // System.out.println(Utilities.prettyPrintMap(mostCommon));

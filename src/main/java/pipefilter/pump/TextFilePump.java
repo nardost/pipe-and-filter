@@ -4,7 +4,6 @@ import pipefilter.exception.PipeFilterException;
 import pipefilter.pipe.Pipe;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -12,6 +11,13 @@ import java.util.concurrent.CountDownLatch;
 
 import static pipefilter.config.Configuration.*;
 
+/**
+ * @author Nardos Tessema
+ *
+ * The Source of the text stream
+ *
+ * Reads a text file and streams the lines
+ */
 public class TextFilePump implements Pump<String, String>, Runnable {
 
     private final BufferedReader reader;

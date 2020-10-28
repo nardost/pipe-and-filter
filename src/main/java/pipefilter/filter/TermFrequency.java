@@ -3,6 +3,8 @@ package pipefilter.filter;
 import static pipefilter.config.Configuration.SENTINEL_VALUE;
 
 /**
+ * @author Nardos Tessema
+ *
  * A class that wraps a term and its frequency.
  */
 public class TermFrequency implements Data {

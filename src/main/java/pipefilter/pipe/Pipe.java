@@ -9,11 +9,11 @@ package pipefilter.pipe;
  * components use to share data.
  *
  * Two adjacent components have a Producer/Consumer
- * type of relationship.
- * Pipes must, therefore, be implemented as blocking queues.
+ * type of relationship. Pipes must, therefore, be
+ * implemented as blocking queues.
  *
- * The type of the data is determined by the output/input
- * type of the filters it serves.
+ * The type of the Pipe is determined by the
+ * output/input type of the filters it serves.
  *
  * Note that:
  *
@@ -24,7 +24,7 @@ package pipefilter.pipe;
  * (3) The input type of the sink is the same as the output
  *     type of the last filter in the chain.
  *
- * @param <T> the type the pipe data structure holds
+ * @param <T> the type of data the Pipe holds
  */
 public interface Pipe<T> {
     T take() throws InterruptedException;

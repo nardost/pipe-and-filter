@@ -18,10 +18,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * @author Nardos Tessema
+ *
  * A registry of available Pumps, Filters and Sinks.
  * Each component is uniquely identified by a name.
  * The unique name of the components is used by the
- * corresponding factory to create instance by reflection.
+ * corresponding factory to create instances by reflection.
  */
 public class Registry {
     /**

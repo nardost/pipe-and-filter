@@ -9,15 +9,14 @@ import pipefilter.pump.PumpFactory;
 import pipefilter.sink.Sink;
 import pipefilter.sink.SinkFactory;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
-import static pipefilter.config.Configuration.STOP_WORDS;
-
 /**
+ * @author Nardos Tessema
+ *
  * The Pipeline class abstracts the entirety of the
  * Pump, Filter, Sink, Pipe arrangement as a list of
  * Threads. The filters, pumps and sinks are active

@@ -7,8 +7,8 @@ package pipefilter.filter;
  *
  *     - The main method has been removed as it is not needed here.
  *
- * This Java implementation of the Porter algorithm is written by Porter himself
- * and is downloaded from the official website of the Porter Algorithm.
+ * This Java implementation of the Porter algorithm is written by Porter
+ * himself and is downloaded from the official website of the Porter Algorithm.
  *
  * @see <a href="https://tartarus.org/martin/PorterStemmer/index.html">The Porter Stemming Algorithm</a>
  */
