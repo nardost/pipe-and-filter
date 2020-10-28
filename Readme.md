@@ -54,17 +54,17 @@ The ```Pipe``` types the ```PipeFactory``` is currently aware of are:
 ```
 1. java.lang.String
 2. pipefilter.filter.TermFrequency
-3. java.lang.Integer _(not used in this application)_
-4. java.lang.Double _(not used in this application)_
+3. java.lang.Integer (not used in this application)
+4. java.lang.Double (not used in this application)
 ```
 
 The buffer capacity of pipes is configurable with the global PIPE\_CAPACITY configuration parameter.
 
 #### 3.2 Pump
 
-Pumps are active elements (Runnable) and implement the ```Pump``` interface.
+Pumps are active elements ```(Runnable)``` and implement the ```Pump``` interface.
 ```java
-public interface Pump<T, U> extends ```Runnable``` {
+public interface Pump<T, U> extends Runnable {
     void pump();
 }
 ```
@@ -81,9 +81,9 @@ Implemented pumps: ```TextFilePump```
 
 #### 3.3 Filter
 
-Filters are active elements (Runnable) that implement the ```Filter``` interface.
+Filters are active elements ```(Runnable)``` that implement the ```Filter``` interface.
 ```java
-public interface Filter<T, U> extends ```Runnable``` {
+public interface Filter<T, U> extends Runnable {
     void filter();
 }
 ```
@@ -109,9 +109,9 @@ A ```Filter``` factory builds filters using the Java reflection API. The ```Filt
 
 #### 3.4 Sink
 
-Sinks are active elements (Runnable) that implement the ```Sink``` interface.
+Sinks are active elements ```(Runnable)``` that implement the ```Sink``` interface.
 ```java
-public interface Sink<T, U> extends ```Runnable``` {
+public interface Sink<T, U> extends Runnable {
     void drain();
 }
 
@@ -128,7 +128,7 @@ A ```Sink``` factory uses the Java reflection API to build ```Sink``` objects. T
 Implemented sinks:
 ```
 1. FrequencyTermInverter
-2. TermFrequencyCounter (_not used in this application_)
+2. TermFrequencyCounter (not used in this application)
 ```
 
 #### 3.5 Pipeline
@@ -136,7 +136,7 @@ Implemented sinks:
 A ```Pipeline``` represents an ordered assembly of a Pump, a series of Filters, and a ```Sink``` chained together. A ```Pipeline``` implements the ```Pipeline``` interface.
 
 ```java
-public interface ```Pipeline``` {
+public interface Pipeline {
     void run() throws InterruptedException;
 }
 ```
