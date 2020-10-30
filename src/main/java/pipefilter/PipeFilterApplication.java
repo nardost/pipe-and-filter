@@ -1,5 +1,6 @@
 package pipefilter;
 
+import pipefilter.config.Configuration;
 import pipefilter.exception.PipeFilterException;
 import pipefilter.pipeline.Pipeline;
 import pipefilter.pipeline.PipelineFactory;
@@ -8,6 +9,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Nardos Tessema
@@ -39,11 +41,13 @@ public class PipeFilterApplication {
      */
     private static final  Map<String, Integer> terms = new TreeMap<>();
 
+    private static String inputFile;
+
     public static void main(String[] args) throws InterruptedException {
 
         try {
-            // Get the input file path
-            final String text = parseCommandLineArguments(args);
+            // Extract program arguments
+            parseCommandLineArguments(args);
 
             // The components that make up the pipeline (in that order)
             final String[] assembly = new String[] {
@@ -62,16 +66,17 @@ public class PipeFilterApplication {
             final String pipelineType = "serial";
 
             // Construct the pipeline.
-            final Pipeline pipeline = PipelineFactory.build(text, frequencies, assembly, pipelineType);
+            final Pipeline pipeline = PipelineFactory.build(inputFile, frequencies, assembly, pipelineType);
 
             // Start the pipeline (with timing instrumentation code)
             long start = System.currentTimeMillis();
             pipeline.run();
             long elapsedTime = System.currentTimeMillis() - start;
+            TimeUnit.MILLISECONDS.sleep(2000L);
             final String message = "Time taken to process";
-            final int N = message.length() + text.length() + 2;
+            final int N = message.length() + inputFile.length() + 2;
             System.out.printf("%1$" + N + "s%2$s%3$10s%n", "", "┌", "┐");
-            System.out.printf("%s %s: %d ms%n", message, text, elapsedTime);
+            System.out.printf("%s %s: %d ms%n", message, inputFile, elapsedTime);
             System.out.printf("%1$" + N + "s%2$s%3$10s%n", "", "└", "┘");
         } catch (PipeFilterException pfe) {
             System.out.println(pfe.getMessage());
@@ -79,13 +84,29 @@ public class PipeFilterApplication {
     }
 
     /**
-     * Get the file to be processed
+     * Extract command line program arguments.
+     *
+     * 1st arg: The input file name (absolute path).
+     * 2nd arg: The pipe capacity. Optional. Default value used if not supplied.
+     *
      * @param args command line arguments list
      */
-    private static String parseCommandLineArguments(String[] args) {
+    private static void parseCommandLineArguments(String[] args) {
         if(args.length == 1) {
-            return args[0];
+            inputFile = args[0];
+            return;
         }
-        throw new PipeFilterException("Provide file path.");
+        if(args.length > 1) {
+            inputFile = args[0];
+            try {
+                final int pipeCapacity = Integer.parseInt(args[1]);
+                if(pipeCapacity > 0) {
+                    Configuration.PIPE_CAPACITY = pipeCapacity;
+                    return;
+                }
+            } catch (NumberFormatException ignored) {
+            }
+        }
+        throw new PipeFilterException("1st arg: valid absolute path to input file\n2nd arg: positive integer");
     }
 }

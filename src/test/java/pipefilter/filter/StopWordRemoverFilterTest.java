@@ -6,6 +6,8 @@ import pipefilter.TestUtilities;
 import pipefilter.pipe.Pipe;
 import pipefilter.pipe.PipeFactory;
 
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.concurrent.CountDownLatch;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,6 +29,8 @@ public class StopWordRemoverFilterTest {
         SENTINEL_VALUE = "$$$";
         PIPE_CAPACITY = 40;
         STOP_WORDS = new String[] { "a", "am", "an", "and", "at", "on", "or", "so", "the" };
+        STOP_WORDS_MAP = new HashMap<>();
+        Arrays.stream(STOP_WORDS).forEach(w -> STOP_WORDS_MAP.put(w.toLowerCase(), true));
 
 
         input = (Pipe<String>) PipeFactory.build("java.lang.String");

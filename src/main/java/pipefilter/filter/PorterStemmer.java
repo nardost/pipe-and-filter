@@ -24,6 +24,15 @@ public class PorterStemmer implements Filter<String, String> {
     private final Pipe<String> output;
     private final CountDownLatch doneSignal;
 
+    /**
+     * Timing instrumentation instance variables
+     */
+    private long cumulativeInputBlockingTime;
+    private long cumulativeOutputBlockingTime;
+    private long totalProcessingTime;
+    private long inputCounter;
+    private long outputCounter;
+
     public PorterStemmer(Pipe<String> input, Pipe<String> output, CountDownLatch doneSignal) {
         this.input = input;
         this.output = output;
@@ -32,30 +41,46 @@ public class PorterStemmer implements Filter<String, String> {
 
     @Override
     public void filter() {
+        inputCounter = 0;
+        outputCounter = 0;
+        cumulativeInputBlockingTime = 0;
+        cumulativeOutputBlockingTime = 0;
         long start = System.currentTimeMillis();
         while(true) {
+            long beforeInputPipe;
+            long beforeOutputPipe;
             try {
+                beforeInputPipe = System.currentTimeMillis();
                 final String word = input.take();
+                cumulativeInputBlockingTime += System.currentTimeMillis() - beforeInputPipe;
+                inputCounter++;
+
                 if(word.equals(SENTINEL_VALUE)) {
+                    beforeOutputPipe = System.currentTimeMillis();
                     output.put(SENTINEL_VALUE);
+                    cumulativeOutputBlockingTime += System.currentTimeMillis() - beforeOutputPipe;
                     break;
                 }
                 Stemmer stemmer = new Stemmer();
                 stemmer.add(word.toCharArray(), word.length());
                 stemmer.stem();
                 final String stem = stemmer.toString();
+
+                beforeOutputPipe = System.currentTimeMillis();
                 output.put(stem);
+                cumulativeOutputBlockingTime += System.currentTimeMillis() - beforeOutputPipe;
+                outputCounter++;
             } catch (InterruptedException ie) {
                 ie.printStackTrace();
             }
         }
-        long elapsedTime = System.currentTimeMillis() - start;
-        // System.out.printf("%1$-30s%2$9d%n", "en-porter-stemmer", elapsedTime);
+        totalProcessingTime = System.currentTimeMillis() - start;
     }
 
     @Override
     public void run() {
         filter();
         doneSignal.countDown();
+        System.out.printf("%1$-26s | %2$10s | %3$11s | %4$9s | %5$8s | %6$8s%n", getClass().getSimpleName(), cumulativeInputBlockingTime, cumulativeOutputBlockingTime, totalProcessingTime, inputCounter, outputCounter);
     }
 }

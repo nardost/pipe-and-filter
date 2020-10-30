@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Nardos Tessema
@@ -50,6 +51,15 @@ public class FrequencyTermInverter implements Sink<TermFrequency, Map<Integer, L
     private final Map<Integer, List<String>> output;
     private final CountDownLatch doneSignal;
 
+    /**
+     * Timing instrumentation instance variables
+     */
+    private long cumulativeInputBlockingTime;
+    private long cumulativeOutputBlockingTime;
+    private long totalProcessingTime;
+    private long inputCounter;
+    private long outputCounter;
+
     public FrequencyTermInverter(Pipe<TermFrequency> input, Map<Integer, List<String>> output, CountDownLatch doneSignal) {
         this.input = input;
         this.output = output;
@@ -58,10 +68,19 @@ public class FrequencyTermInverter implements Sink<TermFrequency, Map<Integer, L
 
     @Override
     public void drain() {
+        inputCounter = 0;
+        outputCounter = 0;
+        cumulativeInputBlockingTime = 0;
+        cumulativeOutputBlockingTime = 0;
         long start = System.currentTimeMillis();
         while(true) {
+            long beforeInputPipe;
+            long beforeOutputPipe;
             try {
+                beforeInputPipe = System.currentTimeMillis();
                 final TermFrequency tf = input.take();
+                cumulativeInputBlockingTime += System.currentTimeMillis() - beforeInputPipe;
+                inputCounter++;
                 /*
                  * If input is sentinel value, be done.
                  */
@@ -91,13 +110,25 @@ public class FrequencyTermInverter implements Sink<TermFrequency, Map<Integer, L
                 ie.printStackTrace();
             }
         }
-        long elapsedTime = System.currentTimeMillis() - start;
-        // System.out.printf("%1$-30s%2$9d%n", "frequency-term-inverter-sink", elapsedTime);
+        totalProcessingTime = System.currentTimeMillis() - start;
+        cumulativeOutputBlockingTime = 0;
+        outputCounter = output.size();
     }
 
     @Override
     public void run() {
         drain();
+        doneSignal.countDown();
+        System.out.printf("%1$-26s | %2$10s | %3$11s | %4$9s | %5$8s | %6$8s%n", getClass().getSimpleName(), cumulativeInputBlockingTime, cumulativeOutputBlockingTime, totalProcessingTime, inputCounter, outputCounter);
+
+        /*
+         * Some artificial delay...
+         */
+        try {
+            TimeUnit.MILLISECONDS.sleep(1000L);
+        } catch (InterruptedException ignored) {
+        }
+        System.out.println("---------------------------------------------------------------------------------------");
         /*
          * This is the last component in the pipeline,
          * and it is done with its draining operations.
@@ -130,6 +161,5 @@ public class FrequencyTermInverter implements Sink<TermFrequency, Map<Integer, L
         // System.out.println(Utilities.prettyPrintMap(frequencies));
 
         // notify awaiting thread that draining has completed
-        doneSignal.countDown();
     }
 }

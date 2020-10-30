@@ -44,6 +44,10 @@ public class SerialPipeline implements Pipeline {
 
     @Override
     public void run() throws InterruptedException {
+        System.out.println("---------------------------------------------------------------------------------------");
+        System.out.printf("%1$-26s | %2$10s | %3$11s | %4$9s | %5$8s | %6$8s%n", "Component Class Name", "Blocked on", " Blocked on", "    Total", "   Input", "  Output");
+        System.out.printf("%1$-26s | %2$10s | %3$11s | %4$9s | %5$5s | %6$6s%n", "[Pump | Filter | Sink]", "Input (ms)", "Output (ms)", "Time (ms)", "   Count", "   Count");
+        System.out.println("---------------------------------------------------------------------------------------");
         pipelineComponents.forEach(Thread::start);
         /*
          * Wait for all threads to be done before returning to the main thread.
@@ -61,7 +65,7 @@ public class SerialPipeline implements Pipeline {
 
     /**
      * Given an array of names of pipeline components, this method assembles
-     * a pipeline using the Java reflection API. Each Pump, Sink, or Filter
+     * a pipeline using the Java Reflection API. Each Pump, Sink, or Filter
      * has a unique name assigned to it in the registry.
      *
      * @see pipefilter.config.Registry

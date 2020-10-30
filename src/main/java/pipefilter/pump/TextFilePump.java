@@ -24,6 +24,23 @@ public class TextFilePump implements Pump<String, String>, Runnable {
     private final Pipe<String> pipe;
     private final CountDownLatch doneSignal;
 
+    /**
+     * Timing instrumentation code.
+     * The following instance variables are not
+     * part of the application. They are there just
+     * for measuring times spent in pipes, filters, etc.
+     *
+     * To clean the instrumentation code later on, begin by
+     * deleting these instance variable declarations, and the
+     * rest of the instrumentation code will be clearly
+     * visible with the help of the IDE error highlighting.
+     */
+    private long cumulativeLineReadingTime;
+    private long cumulativeOutputBlockingTime;
+    private long totalProcessingTime;
+    private long inputCounter;
+    private long outputCounter;
+
     public TextFilePump(String filePath, Pipe<String> pipe, CountDownLatch doneSignal) {
         try {
             this.pipe = pipe;
@@ -37,13 +54,25 @@ public class TextFilePump implements Pump<String, String>, Runnable {
 
     @Override
     public void pump() {
+        cumulativeLineReadingTime = 0L;
+        cumulativeOutputBlockingTime = 0L;
+        long start = System.currentTimeMillis();
         try (reader) {
+            long beforeReadingLine;
+            long beforeOutputPipe;
             String line;
-            long start = System.currentTimeMillis();
-
+            beforeReadingLine = System.currentTimeMillis();
             while ((line = reader.readLine()) != null) {
+                cumulativeLineReadingTime += System.currentTimeMillis() - beforeReadingLine;
+                inputCounter++;
+
+                beforeOutputPipe = System.currentTimeMillis();
                 pipe.put(line);
+                cumulativeOutputBlockingTime += System.currentTimeMillis() - beforeOutputPipe;
+                outputCounter++;
+                beforeReadingLine = System.currentTimeMillis();
             }
+
             /* // parallel stream implementation appears to be slower than the above.
             reader.lines().parallel().forEach(l -> {
                 try {
@@ -58,12 +87,13 @@ public class TextFilePump implements Pump<String, String>, Runnable {
              * to notify the next component down the line that
              * the stream has ended.
              */
+            beforeOutputPipe = System.currentTimeMillis();
             pipe.put(SENTINEL_VALUE);
-            long elapsedTime = System.currentTimeMillis() - start;
-            // System.out.printf("%1$-30s%2$9d%n", "text-file-streamer-pump", elapsedTime);
+            cumulativeOutputBlockingTime += System.currentTimeMillis() - beforeOutputPipe;
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
+        totalProcessingTime = System.currentTimeMillis() - start;
     }
 
     @Override
@@ -73,5 +103,6 @@ public class TextFilePump implements Pump<String, String>, Runnable {
          * Decrement the countdown latch when thread is done.
          */
         doneSignal.countDown();
+        System.out.printf("%1$-26s | %2$10s | %3$11s | %4$9s | %5$8s | %6$8s%n", getClass().getSimpleName(), cumulativeLineReadingTime, cumulativeOutputBlockingTime, totalProcessingTime, inputCounter, outputCounter);
     }
 }

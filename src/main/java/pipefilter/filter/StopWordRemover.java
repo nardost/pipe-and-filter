@@ -9,6 +9,7 @@ import java.util.concurrent.CountDownLatch;
 
 import static pipefilter.config.Configuration.SENTINEL_VALUE;
 import static pipefilter.config.Configuration.STOP_WORDS;
+import static pipefilter.config.Configuration.STOP_WORDS_MAP;
 
 /**
  * @author Nardos Tessema
@@ -29,60 +30,62 @@ public class StopWordRemover implements Filter<String, String> {
      */
     private static final Map<String, Boolean> stopWords = new HashMap<>();
 
+    /**
+     * Timing instrumentation instance variables
+     */
+    private long cumulativeInputBlockingTime;
+    private long cumulativeOutputBlockingTime;
+    private long totalProcessingTime;
+    private long inputCounter;
+    private long outputCounter;
+
     public StopWordRemover(Pipe<String> input, Pipe<String> output, CountDownLatch doneSignal) {
         this.input = input;
         this.output = output;
         this.doneSignal = doneSignal;
-        /*
-         * Get the stop words to be removed.
-         */
-        loadStopWords();
     }
 
     @Override
     public void filter() {
+        inputCounter = 0;
+        outputCounter = 0;
+        cumulativeInputBlockingTime = 0;
+        cumulativeOutputBlockingTime = 0;
         long start = System.currentTimeMillis();
         while(true) {
+            long beforeInputPipe;
+            long beforeOutputPipe;
             try {
+                beforeInputPipe = System.currentTimeMillis();
                 final String word = input.take();
+                cumulativeInputBlockingTime += System.currentTimeMillis() - beforeInputPipe;
+                inputCounter++;
                 if(word.equals(SENTINEL_VALUE)) {
+                    beforeOutputPipe = System.currentTimeMillis();
                     output.put(SENTINEL_VALUE);
+                    cumulativeOutputBlockingTime += System.currentTimeMillis() - beforeOutputPipe;
                     break;
                 }
                 /*
                  * Discard if input is a stop word
                  */
-                if(!stopWords.containsKey(word.toLowerCase())) {
+                if(!STOP_WORDS_MAP.containsKey(word.toLowerCase())) {
+                    beforeOutputPipe = System.currentTimeMillis();
                     output.put(word);
+                    cumulativeOutputBlockingTime += System.currentTimeMillis() - beforeOutputPipe;
+                    outputCounter++;
                 }
             } catch (InterruptedException ie) {
                 ie.printStackTrace();
             }
         }
-        long elapsedTime = System.currentTimeMillis() - start;
-        // System.out.printf("%1$-30s%2$9d%n", "stop-word-remover", elapsedTime);
+        totalProcessingTime = System.currentTimeMillis() - start;
     }
 
     @Override
     public void run() {
         filter();
         doneSignal.countDown();
-    }
-
-    /**
-     * The list of stop words are loaded into a HashMap
-     * to get an O(1) lookup / key searching.
-     * List of words from https://www.ranks.nl/stopwords and
-     * prepared into a text file by Professor Engelhardt.
-     */
-    private void loadStopWords() {
-        /*
-         * The boolean value can be used to turn on/off the status
-         * of a word as a stop word. In this implementation, the value
-         * is not used since the stop word remover merely checks the
-         * presence of the key in the map. Boolean is chosen because
-         * it has the least space requirement.
-         */
-        Arrays.stream(STOP_WORDS).forEach(w -> stopWords.put(w.toLowerCase(), true));
+        System.out.printf("%1$-26s | %2$10s | %3$11s | %4$9s | %5$8s | %6$8s%n", getClass().getSimpleName(), cumulativeInputBlockingTime, cumulativeOutputBlockingTime, totalProcessingTime, inputCounter, outputCounter);
     }
 }
