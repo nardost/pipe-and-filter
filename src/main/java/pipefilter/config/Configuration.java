@@ -49,10 +49,14 @@ public class Configuration {
      * Parallelizable Components
      */
     public static Map<String, Integer> parallelComponents = new HashMap<>();
+    /**
+     * How many parallel streams? Let's make it same for all...
+     */
+    public static int NUMBER_OF_PARALLEL_INSTANCES = 2;
     static {
-        parallelComponents.put("tokenizer", 4);
-        parallelComponents.put("text-preprocessor", 4);
-        parallelComponents.put("stop-word-remover", 4);
-        parallelComponents.put("en-porter-stemmer", 4);
+        parallelComponents.put("tokenizer", NUMBER_OF_PARALLEL_INSTANCES);
+        parallelComponents.put("text-preprocessor", NUMBER_OF_PARALLEL_INSTANCES);
+        parallelComponents.put("stop-word-remover", NUMBER_OF_PARALLEL_INSTANCES);
+        parallelComponents.put("en-porter-stemmer", NUMBER_OF_PARALLEL_INSTANCES);
     }
 }
