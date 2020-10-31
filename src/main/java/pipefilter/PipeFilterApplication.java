@@ -63,7 +63,7 @@ public class PipeFilterApplication {
                     "frequency-term-inverter"
             };
 
-            // What type of pipeline? (Only serial available)
+            // What type of pipeline? (serial | parallel)
             final String pipelineType = "parallel";
 
             // Construct the pipeline.

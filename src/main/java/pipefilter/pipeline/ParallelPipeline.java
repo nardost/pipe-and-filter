@@ -16,6 +16,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static pipefilter.config.Configuration.PIPE_CAPACITY;
 import static pipefilter.config.Configuration.parallelComponents;
@@ -24,7 +27,7 @@ public class ParallelPipeline implements Pipeline {
 
     private String input;
     private Map<String, Integer> output;
-    private final List<Thread> pipelineComponents;
+    private final List<Runnable> pipelineComponents;
     private final CountDownLatch doneSignal;
 
     public ParallelPipeline(String input, Map<String, Integer> output, String[] pipeline) {
@@ -48,11 +51,22 @@ public class ParallelPipeline implements Pipeline {
         System.out.printf("%1$-26s | %2$10s | %3$11s | %4$9s | %5$8s | %6$8s%n", "Component Class Name", "Blocked on", " Blocked on", " Response", "   Input", "  Output");
         System.out.printf("%1$-26s | %2$10s | %3$11s | %4$9s | %5$5s | %6$6s%n", "[Pump | Filter | Sink]", "Input (ms)", "Output (ms)", "Time (ms)", "   Count", "   Count");
         System.out.println("---------------------------------------------------------------------------------------");
-        pipelineComponents.forEach(Thread::start);
+        /*
+         * Use ExecutorService instead of creating Threads explicitly.
+         * We know exactly how many threads there will be in the pipeline,
+         * so we can use a fixed thread pool.
+         */
+        final int nThreads = (int) doneSignal.getCount();
+        ExecutorService executor = Executors.newFixedThreadPool(nThreads);
+        pipelineComponents.forEach(executor::execute);
         /*
          * Wait for all threads to be done before returning to the main thread.
          */
         doneSignal.await();
+        /*
+         * Shutdown the executor so that the program returns
+         */
+        executor.shutdown();
         /*
          * At this point, it is guaranteed that all the threads
          * (the pump, the filters, and the sink) have completed
@@ -110,7 +124,7 @@ public class ParallelPipeline implements Pipeline {
         Pipe<?> out = PipeFactory.build(pipeDataType, capacity);
         Pipe<?> in = out;
         Pump<?, ?> pump = PumpFactory.build(name, input, out, doneSignal);
-        pipelineComponents.add(new Thread(pump));
+        pipelineComponents.add(pump);
 
         /*
          * Create a chain of filters.
@@ -133,7 +147,7 @@ public class ParallelPipeline implements Pipeline {
              */
             if(!parallelComponents.containsKey(name) || parallelComponents.get(name) == 1) {
                 Filter<?, ?> filter = FilterFactory.build(name, in, out, doneSignal);
-                pipelineComponents.add(new Thread(filter));
+                pipelineComponents.add(filter);
             } else {
                 /*
                  * Get the degree of parallelism from Configuration.
@@ -167,9 +181,9 @@ public class ParallelPipeline implements Pipeline {
                  * Serializer collects the N parallel streams into one stream
                  */
                 Serializer serializer = new Serializer(outputs, (Pipe<String>) out, doneSignal);
-                pipelineComponents.add(new Thread(parallelizer));
-                parallelFilters.forEach(filter -> pipelineComponents.add(new Thread(filter)));
-                pipelineComponents.add(new Thread(serializer));
+                pipelineComponents.add(parallelizer);
+                parallelFilters.forEach(filter -> pipelineComponents.add(filter));
+                pipelineComponents.add(serializer);
             }
             /*
              * progress to the next component in the chain
@@ -182,7 +196,7 @@ public class ParallelPipeline implements Pipeline {
          */
         name = components[components.length - 1];
         Sink<?, ?> sink = SinkFactory.build(name, in, output, doneSignal);
-        pipelineComponents.add(new Thread(sink));
+        pipelineComponents.add(sink);
     }
 
     /**
