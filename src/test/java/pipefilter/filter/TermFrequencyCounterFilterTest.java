@@ -28,8 +28,8 @@ public class TermFrequencyCounterFilterTest {
         PIPE_CAPACITY = 40;
 
 
-        input = (Pipe<String>) PipeFactory.build("java.lang.String");
-        output = (Pipe<TermFrequency>) PipeFactory.build("pipefilter.filter.TermFrequency");
+        input = (Pipe<String>) PipeFactory.build("java.lang.String", 100);
+        output = (Pipe<TermFrequency>) PipeFactory.build("pipefilter.filter.TermFrequency", 100);
         signal = new CountDownLatch(1);
     }
 

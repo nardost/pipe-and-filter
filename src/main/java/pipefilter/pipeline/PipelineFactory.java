@@ -44,6 +44,8 @@ public class PipelineFactory {
         if(pipelineType.equalsIgnoreCase("serial")) {
             // TODO: check if input & output types are correct before building the pipeline.
             return new SerialPipeline((String) input, (Map<String, Integer>) output, pipeline);
+        } else if(pipelineType.equalsIgnoreCase("parallel")) {
+            return new ParallelPipeline((String) input, (Map<String, Integer>) output, pipeline);
         }
         throw new PipeFilterException("Unknown pipeline assembly: " + pipelineType);
     }

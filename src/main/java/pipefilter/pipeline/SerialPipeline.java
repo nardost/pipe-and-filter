@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
+import static pipefilter.config.Configuration.PIPE_CAPACITY;
+
 /**
  * @author Nardos Tessema
  *
@@ -89,7 +91,7 @@ public class SerialPipeline implements Pipeline {
         String name = components[0];
         String pipeDataType = PumpFactory.getPumpOutputType(name);
 
-        Pipe<?> out = PipeFactory.build(pipeDataType);
+        Pipe<?> out = PipeFactory.build(pipeDataType, PIPE_CAPACITY);
         Pipe<?> in = out;
         Pump<?, ?> pump = PumpFactory.build(name, input, out, doneSignal);
         pipelineComponents.add(new Thread(pump));
@@ -102,7 +104,7 @@ public class SerialPipeline implements Pipeline {
         for(int i = 1; i <= components.length - 2; i++) {
             name = components[i];
             pipeDataType = FilterFactory.getFilterOutputType(name);
-            out = PipeFactory.build(pipeDataType);
+            out = PipeFactory.build(pipeDataType, PIPE_CAPACITY);
             Filter<?, ?> filter = FilterFactory.build(name, in, out, doneSignal);
             pipelineComponents.add(new Thread(filter));
             in = out;

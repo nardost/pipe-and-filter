@@ -9,13 +9,13 @@ public class PipeFactoryTest {
     @Test
     public void pipeFactoryThrowsPipeFilterExceptionIfTypeUnknown() {
         final String pipeType = "some.unknown.Type";
-        assertThatThrownBy(() -> PipeFactory.build(pipeType))
+        assertThatThrownBy(() -> PipeFactory.build(pipeType, 10))
                 .hasMessageContaining("Unknown pipe type");
     }
 
     @Test
     public void pipeFactoryDoesNotThrowAnyExceptionForKnowPipeType() {
         final String pipeType = "java.lang.String";
-        PipeFactory.build(pipeType);
+        PipeFactory.build(pipeType, 1);
     }
 }

@@ -27,18 +27,18 @@ public class PipeFactory {
      * @param type the type of the data the Pipe holds
      * @return a Pipe object
      */
-    public static Pipe<?> build(String type) {
+    public static Pipe<?> build(String type, int capacity) {
         if(type.equals("java.lang.String")) {
-            return new BlockingQueuePipe<String>(new ArrayBlockingQueue<>(PIPE_CAPACITY));
+            return new BlockingQueuePipe<String>(new ArrayBlockingQueue<>(capacity));
         }
         if(type.equals("pipefilter.filter.TermFrequency")) {
-            return new BlockingQueuePipe<TermFrequency>(new ArrayBlockingQueue<>(PIPE_CAPACITY));
+            return new BlockingQueuePipe<TermFrequency>(new ArrayBlockingQueue<>(capacity));
         }
         if(type.equals("java.lang.Integer")) {
-            return new BlockingQueuePipe<Integer>(new ArrayBlockingQueue<>(PIPE_CAPACITY));
+            return new BlockingQueuePipe<Integer>(new ArrayBlockingQueue<>(capacity));
         }
         if(type.equals("java.lang.Double")) {
-            return new BlockingQueuePipe<Double>(new ArrayBlockingQueue<>(PIPE_CAPACITY));
+            return new BlockingQueuePipe<Double>(new ArrayBlockingQueue<>(capacity));
         }
         throw new PipeFilterException("Unknown pipe type: " + type);
     }

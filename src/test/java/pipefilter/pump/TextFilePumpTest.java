@@ -35,7 +35,7 @@ public class TextFilePumpTest {
         SENTINEL_VALUE = "$$$";
         PIPE_CAPACITY = 20;
 
-        output = (Pipe<String>) PipeFactory.build("java.lang.String");
+        output = (Pipe<String>) PipeFactory.build("java.lang.String", 10);
 
         final String[] lines = new String[] {
                 "the first line",

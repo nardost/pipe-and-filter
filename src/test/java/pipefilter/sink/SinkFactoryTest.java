@@ -15,7 +15,7 @@ public class SinkFactoryTest {
         assertThatThrownBy(
                 () -> SinkFactory.build(
                         "unknown-sink",
-                        PipeFactory.build("java.lang.String"),
+                        PipeFactory.build("java.lang.String", 1),
                         new HashMap<>(),
                         new CountDownLatch(1)))
                 .hasMessageContaining("Sink not found in the registry");

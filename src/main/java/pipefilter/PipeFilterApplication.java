@@ -64,7 +64,7 @@ public class PipeFilterApplication {
             };
 
             // What type of pipeline? (Only serial available)
-            final String pipelineType = "serial";
+            final String pipelineType = "parallel";
 
             // Construct the pipeline.
             final Pipeline pipeline = PipelineFactory.build(inputFile, frequencies, assembly, pipelineType);

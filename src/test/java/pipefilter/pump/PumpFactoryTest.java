@@ -26,7 +26,7 @@ public class PumpFactoryTest {
                 () -> PumpFactory.build(
                         "non-registered-pump",
                         file,
-                        PipeFactory.build("java.lang.String"),
+                        PipeFactory.build("java.lang.String", 1),
                         new CountDownLatch(1)))
                 .hasMessageContaining("while building pump");
     }
@@ -37,7 +37,7 @@ public class PumpFactoryTest {
                 () -> PumpFactory.build(
                         "text-streamer",
                         "non-existent-file.txt",
-                        PipeFactory.build("java.lang.String"),
+                        PipeFactory.build("java.lang.String", 1),
                         new CountDownLatch(1)))
                 .hasMessageContaining("while building pump");
     }

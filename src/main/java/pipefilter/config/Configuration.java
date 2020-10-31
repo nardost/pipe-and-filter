@@ -23,7 +23,7 @@ public class Configuration {
      *  - Same for all pipes
      *  - Value arbitrarily chosen for now
      */
-    public static int PIPE_CAPACITY = 100;
+    public static int PIPE_CAPACITY = 1024;
     /**
      * Stop words
      */
@@ -44,5 +44,15 @@ public class Configuration {
          * it has the least space requirement.
          */
         Arrays.stream(STOP_WORDS).forEach(w -> STOP_WORDS_MAP.put(w.toLowerCase(), true));
+    }
+    /**
+     * Parallelizable Components
+     */
+    public static Map<String, Integer> parallelComponents = new HashMap<>();
+    static {
+        parallelComponents.put("tokenizer", 4);
+        parallelComponents.put("text-preprocessor", 4);
+        parallelComponents.put("stop-word-remover", 4);
+        parallelComponents.put("en-porter-stemmer", 4);
     }
 }

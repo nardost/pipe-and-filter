@@ -33,8 +33,8 @@ public class StopWordRemoverFilterTest {
         Arrays.stream(STOP_WORDS).forEach(w -> STOP_WORDS_MAP.put(w.toLowerCase(), true));
 
 
-        input = (Pipe<String>) PipeFactory.build("java.lang.String");
-        output = (Pipe<String>) PipeFactory.build("java.lang.String");
+        input = (Pipe<String>) PipeFactory.build("java.lang.String", 100);
+        output = (Pipe<String>) PipeFactory.build("java.lang.String", 100);
         signal = new CountDownLatch(1);
     }
 

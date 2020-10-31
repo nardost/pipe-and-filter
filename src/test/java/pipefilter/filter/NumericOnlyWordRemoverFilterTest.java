@@ -28,8 +28,8 @@ public class NumericOnlyWordRemoverFilterTest {
         SENTINEL_VALUE = "$$$";
         PIPE_CAPACITY = 20;
 
-        input = (Pipe<String>) PipeFactory.build("java.lang.String");
-        output = (Pipe<String>) PipeFactory.build("java.lang.String");
+        input = (Pipe<String>) PipeFactory.build("java.lang.String", 100);
+        output = (Pipe<String>) PipeFactory.build("java.lang.String", 100);
         signal = new CountDownLatch(1);
     }
 
