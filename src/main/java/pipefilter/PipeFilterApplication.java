@@ -53,9 +53,10 @@ public class PipeFilterApplication {
             final String[] assembly = new String[] {
                     "text-streamer",
                     "tokenizer",
-                    "non-alphanumeric-word-remover",
-                    "numeric-only-word-remover",
-                    "to-lower-case-transformer",
+                    "text-preprocessor",
+                    // "non-alphanumeric-word-remover",
+                    // "numeric-only-word-remover",
+                    // "to-lower-case-transformer",
                     "stop-word-remover",
                     "en-porter-stemmer",
                     "term-frequency-counter",
@@ -71,12 +72,12 @@ public class PipeFilterApplication {
             // Start the pipeline (with timing instrumentation code)
             long start = System.currentTimeMillis();
             pipeline.run();
-            long elapsedTime = System.currentTimeMillis() - start;
+            long responseTime = System.currentTimeMillis() - start;
             TimeUnit.MILLISECONDS.sleep(2000L);
-            final String message = "Time taken to process";
-            final int N = message.length() + inputFile.length() + 2;
+            final String message = "Response Time for";
+            final int N = message.length() + inputFile.length() + 4;
             System.out.printf("%1$" + N + "s%2$s%3$10s%n", "", "┌", "┐");
-            System.out.printf("%s %s: %d ms%n", message, inputFile, elapsedTime);
+            System.out.printf("%s <%s>: %d ms%n", message, inputFile, responseTime);
             System.out.printf("%1$" + N + "s%2$s%3$10s%n", "", "└", "┘");
         } catch (PipeFilterException pfe) {
             System.out.println(pfe.getMessage());

@@ -6,6 +6,7 @@ import pipefilter.filter.OpenNLPStemmer;
 import pipefilter.filter.PorterStemmer;
 import pipefilter.filter.StopWordRemover;
 import pipefilter.filter.TermFrequencyCounter;
+import pipefilter.filter.TextPreprocessor;
 import pipefilter.filter.ToLowerCaseTransformer;
 import pipefilter.filter.WordBoundaryTokenizer;
 import pipefilter.filter.NonAlphaNumericWordRemover;
@@ -40,6 +41,7 @@ public class Registry {
         registeredFilters.put("opennlp-porter-stemmer", OpenNLPStemmer.class);
         registeredFilters.put("en-porter-stemmer", PorterStemmer.class);
         registeredFilters.put("term-frequency-counter", TermFrequencyCounter.class);
+        registeredFilters.put("text-preprocessor", TextPreprocessor.class);
     }
 
     /**
