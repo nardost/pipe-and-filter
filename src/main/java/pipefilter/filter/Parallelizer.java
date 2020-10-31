@@ -15,11 +15,11 @@ import static pipefilter.config.Configuration.SENTINEL_VALUE;
  * It takes an input item from an input pipe and puts
  * it into N parallel output pipes in Round-Robin turn.
  *
- *                             +--(....)
- *                             +--(pipe)-->[F1]--
- *  --(pipe)-->[Parallelizer]--+--(pipe)-->[F1]--
- *                             +--(pipe)-->[F1]--
- *                             +--(....)
+ *                              +--(****)-->[**]--
+ *                              +--(pipe)-->[F1]--
+ *  --(pipe)-->[Parallelizer]-->+--(pipe)-->[F1]--
+ *                              +--(pipe)-->[F1]--
+ *                              +--(****)-->[**]--
  *
  */
 public class Parallelizer implements Filter<String, String> {

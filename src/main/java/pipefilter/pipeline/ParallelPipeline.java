@@ -16,13 +16,31 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import static pipefilter.config.Configuration.NUMBER_OF_PARALLEL_INSTANCES;
 import static pipefilter.config.Configuration.PIPE_CAPACITY;
-import static pipefilter.config.Configuration.parallelComponents;
+import static pipefilter.config.Configuration.parallelizable;
 
+/**
+ * @author Nardos Tessema
+ *
+ * A parallel pipeline.
+ *
+ * New special filters Parallelizer and Serializer
+ * parallelize and serialize the pipeline.
+ *
+ * The implementation is sort of convoluted but
+ * works for demonstration purposes.
+ *
+ * Known issues:
+ *
+ * (1) The pipeline gets stuck for low pipe capacities.
+ * (2) I am assuming parallelizable filters all use String Pipes.
+ *     The dynamic type checking is sort of lost here...
+ * (3)
+ */
 public class ParallelPipeline implements Pipeline {
 
     private String input;
@@ -37,8 +55,8 @@ public class ParallelPipeline implements Pipeline {
 
         int countDown = pipeline.length;
         for(String component : pipeline) {
-            if(parallelComponents.containsKey(component) && parallelComponents.get(component) > 1) {
-                countDown += parallelComponents.get(component) + 1;
+            if(parallelizable.containsKey(component) && parallelizable.get(component)) {
+                countDown += NUMBER_OF_PARALLEL_INSTANCES + 1;
             }
         }
         this.doneSignal = new CountDownLatch(countDown);
@@ -145,14 +163,14 @@ public class ParallelPipeline implements Pipeline {
             /*
              * If filter is not parallelized, fit it into the pipeline in series.
              */
-            if(!parallelComponents.containsKey(name) || parallelComponents.get(name) == 1) {
+            if(!parallelizable.containsKey(name) || !parallelizable.get(name)) {
                 Filter<?, ?> filter = FilterFactory.build(name, in, out, doneSignal);
                 pipelineComponents.add(filter);
             } else {
                 /*
                  * Get the degree of parallelism from Configuration.
                  */
-                final int N = parallelComponents.get(name);
+                final int N = NUMBER_OF_PARALLEL_INSTANCES;//parallelComponents.get(name);
                 /*
                  * Parallel instances of filter
                  */
@@ -216,10 +234,10 @@ public class ParallelPipeline implements Pipeline {
         final String nextComponent = indexOfCurrentComponent <= components.length - 2 ? components[indexOfCurrentComponent + 1] : "";
         int capacity = PIPE_CAPACITY;
         if(
-                (parallelComponents.containsKey(nextComponent) && parallelComponents.get(nextComponent) > 1) ||
-                (parallelComponents.containsKey(thisComponent) && parallelComponents.get(thisComponent) > 1)
+                (parallelizable.containsKey(nextComponent) && parallelizable.get(nextComponent)) ||
+                (parallelizable.containsKey(thisComponent) && parallelizable.get(thisComponent))
         ) {
-            capacity = 16 * PIPE_CAPACITY;
+            capacity = NUMBER_OF_PARALLEL_INSTANCES > 1 ? 16 * PIPE_CAPACITY : PIPE_CAPACITY;
         }
         return capacity;
     }

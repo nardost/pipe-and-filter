@@ -14,11 +14,11 @@ import static pipefilter.config.Configuration.SENTINEL_VALUE;
  *
  * It takes N input items from N input pipes in Round-Robin
  * turn and and puts all N items into a single output pipe.
- *                      (....)--+
+ *             -->[**]--(****)--+
  *    +--(pipe)-->[F1]--(pipe)--+
  * -->+--(pipe)-->[F1]--(pipe)--+-->[Serializer]--(pipe)-->
  *    +--(pipe)-->[F1]--(pipe)--+
- *                      (....)--+
+ *             -->[**]--(****)--+
  */
 public class Serializer implements Filter<String, String> {
 
