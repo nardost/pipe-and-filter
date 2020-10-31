@@ -97,15 +97,16 @@ public class PipeFilterApplication {
      * Parses program arguments and options.
      *
      * 1st arg: file name
-     * rest of arguments should be in the form of key=value.
+     * rest of arguments should be in the form of:
+     *     key1 value1 key2 value2 key3 value3
      *
-     * The keys recognized are:
-     *    capacity: pipe capacity (int)
-     *    type: pipe type (serial | parallel)
-     *    streams: number of parallel instances for parallelized filters (int)
+     * Recognized keys (in no particular order):
+     *    capacity : pipe capacity  - integer
+     *    type     : pipe type - serial | parallel
+     *    streams  : number of parallel streams - integer
      *
      * Example:
-     *    java -jar executable.jar filename capacity=100 type=serial streams=4
+     *    java -jar executable.jar filename capacity 100 type serial streams 4
      *
      * @param args program arguments
      */

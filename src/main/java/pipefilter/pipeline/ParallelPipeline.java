@@ -219,7 +219,7 @@ public class ParallelPipeline implements Pipeline {
 
     /**
      * Looks ahead in the array of components and returns a bigger
-     * pipe capacity value if the current of the next filter is parallelized.
+     * pipe capacity value if the current or the next filter is parallelizable.
      *
      * The idea is that whenever a Parallelizer/Serializer is inserted,
      * its input/output pipe should be bigger than the other pipes in the
@@ -233,10 +233,11 @@ public class ParallelPipeline implements Pipeline {
         final String thisComponent = components[indexOfCurrentComponent];
         final String nextComponent = indexOfCurrentComponent <= components.length - 2 ? components[indexOfCurrentComponent + 1] : "";
         int capacity = PIPE_CAPACITY;
-        if(
-                (parallelizable.containsKey(nextComponent) && parallelizable.get(nextComponent)) ||
-                (parallelizable.containsKey(thisComponent) && parallelizable.get(thisComponent))
-        ) {
+        if((parallelizable.containsKey(nextComponent) && parallelizable.get(nextComponent)) ||
+                (parallelizable.containsKey(thisComponent) && parallelizable.get(thisComponent))) {
+            /*
+             * if # streams > 1 get a bigger pipe capacity
+             */
             capacity = NUMBER_OF_PARALLEL_INSTANCES > 1 ? 16 * PIPE_CAPACITY : PIPE_CAPACITY;
         }
         return capacity;
