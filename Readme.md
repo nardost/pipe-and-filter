@@ -211,3 +211,121 @@ All configuration parameters are public class variables of the ```Configuration`
 | Pipes | ```pipefilter.pipe``` |
 | Pipelines | ```pipefilter.pipeline``` |
 | Custom exceptions | ```pipefilter.exception``` |
+
+# Part 2
+
+## Extensibility
+
+1. The customer wishes to redesign the system to handle text files written in languages other than English.
+2. The design time modification must take less than one day.
+3. The ultimate solution must be configurable automatically at runtime.
+
+The only language specific component in the design is the stemmer filter. The customer has, therefore, just a single task to do - implement a stemmer filter for that language in the same fashion as specified for classes that implement the Filter interface, i.e. a single constructor with three arguments.
+
+Once the stemmer for the non-English language has been implemented in the manner required by this design, all the customer has to do is register the new filter (the stemmer) into the Registry (with a unique identifier) and use it.
+
+The extensive use of the _Java reflection API_ and the _Factory Design Pattern_ in the design makes it possible for a user to plug in new components without having to change the design.
+
+**How my Solution Supports the Extensibility Goals**
+
+1. All the customer has to do is implement a new stemmer filter, which will then be registered and plugged into a pipeline. **No system redesign is required**.
+2. Since the design does not have to be modified, the _less-than-one-day_ requirement can easily be met.
+3. My solution is designed to allow the customer to cherry-pick components for a pipeline at runtime. The customer just constructs an array of component identifiers, which is changeable at runtime.
+
+For example, if the new stemmer is given the unique identifier "stemmer-de" (a stemmer for the German language), the customer can construct the pipeline with the following array of component identifiers:
+
+```javascript
+{
+  "text-streamer",
+  "tokenizer",
+  "non-alphanumeric-word-remover",
+  "numeric-only-word-remover",
+  "to-lower-case-transformer",
+  "stop-word-remover",
+  "stemmer-de",
+  "term-frequency-counter",
+  "frequency-term-inverter"
+}
+```
+
+## Three Small Task Filters Merged into One
+
+Three small task filters were merged into a new filter that does all three tasks as one. This was done with the idea that reducing the number of components that block on input/output pipes whenever possible may improve the response time.
+
+
+## Task Executor & Thread Pool Instead of Explicit Threads
+
+The active component threads in Part I were explicit threads. In Part II a fixed thread pool is used to execute the active components because the exact number of threads in a pipeline is known in advance.
+
+## Parallel Pipeline
+
+In Part I of this project, there was only one pipeline type – serial. A parallel pipeline was implemented in this part to see how it will improve (or make worse) overall performance.
+
+To achieve parallelism in a seamless manner (i.e. without having to alter my earlier design), I introduced two special filters that serve as adapters – Parallelizer and Serializer.
+
+1. Parallelizer spreads an incoming stream out into several parallel streams.
+2. Serializer collects a number of parallel streams into a single stream.
+3. Both Parallelizer and Serializer implement the Filter interface, so they are treated just like any other Filter.
+4. Parallelizer and Serializer are not registered in the public Registry, so they are not directly available to the user. The user will have to choose the parallel pipeline type to construct a parallel pipeline.
+5. The design does not parallelize a Pump or a Sink – only Filters are parallelizable.
+6. Parallelizable Filters are registered in the public Registry.
+
+
+## Known Issues with the  ```ParallelPipeline```  Implementation
+
+1. The ParallelPipeline implementation code looks convoluted, and no unit test is written for it, but it works for demonstration.
+2. The program gets stuck when _low pipe capacity_ is combined with _high number of parallel streams_. It could be a resources shortage issue or some bug that I could not figure out. For example, for user inputs type=parallel, capacity=256, streams=2, the program executed with a response time of _4005 ms_, whereas it got stuck for inputs type=parallel, capacity=128, streams=2.
+3. It is assumed that all parallelizable filters have java.lang.String inputs and outputs. The dynamic creation of different types of Pipes is not implemented in ParallelPipeline.
+4. No visible improvement in performance. In fact, it appears to be slower that the serial pipeline.
+
+## Bottlenecks
+
+It is interesting to note from the various tables printed in this report that the overall response time of the pipeline is almost the same as the individual response times of the components. This is not counter intuitive because the components are connected in series, and the overall progress can only be as fast as the slowest component. Some components are inherently slow or non-parallelizable and may be choke points in the pipeline.
+
+1. text-streamer
+
+The pump reads a text file from the system, and file I/O is inherently slow. That makes the pump, text-streamer, a bottleneck to the pipeline.
+
+2. Low pipe capacity
+
+There seems to be an optimal pipe capacity below which the performance of the pipeline is severely hampered.
+
+3. term-frequency-counter
+
+The term counter (term-frequency-counter) does not seem to have exploitable parallelism. Term counting has to be done at a single point, or there has to be additional modification to synchronize counts by multiple threads. Therefore, the filter term-frequency-counter cannot be parallelized and is a potential bottleneck.
+
+4. frequency-term-inverter
+
+Frequency-term inversion has to be done at a single point, or there needs to be some additional modification to integrate all the _frequency-to-list-of-terms_ maps constructed by several threads. Therefore, the filter term-frequency-counter is not parallelizable and is a potential bottleneck.
+
+## Running the Program
+
+The program is modified to take the pipe type and the number of parallel streams as user inputs. Run the program as (values are for example only):
+
+```$ java -jar executable.jar filename.txttype parallel capacity 256 streams 3```
+
+Note: The first argument is compulsory and must always be the input file path. The rest are optional and could come in any order in the form key1 value1 key2 value2 … (whitespace separated). The program parameters and their possible values are:
+
+| **KEY** | **VALID VALUES** | **DEFAULT VALUE** |
+| --- | --- | --- |
+| type | { serial, parallel } | serial |
+| capacity | Positive integer | 1024 |
+| streams | Positive integer | 2 |
+
+## Pipeline Output for kjbible.txt
+```
+---------------------
+FREQUENCY TERMS
+---------------------
+8006 -> { lord }
+4716 -> { god }
+4600 -> { thy }
+3983 -> { ye }
+3843 -> { will }
+3827 -> { thee }
+3486 -> { son }
+2884 -> { king }
+2735 -> { man }
+2615 -> { dai }
+---------------------
+```
