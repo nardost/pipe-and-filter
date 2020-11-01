@@ -250,7 +250,18 @@ For example, if the new stemmer is given the unique identifier "stemmer-de" (a s
 
 ## Three Small Task Filters Merged into One
 
-Three small task filters were merged into a new filter that does all three tasks as one. This was done with the idea that reducing the number of components that block on input/output pipes whenever possible may improve the response time.
+Three small task filters were merged into a new filter that does all three tasks as one. This was done with the idea that reducing the number of components that block on input/output pipes whenever possible may improve the response time. The new pipeline assembly string is:
+```javascript
+    {
+        "text-streamer",
+        "tokenizer",
+        "text-preprocessor",
+        "stop-word-remover",
+        "en-porter-stemmer",
+        "term-frequency-counter",
+        "frequency-term-inverter"
+    }
+```
 
 
 ## Task Executor & Thread Pool Instead of Explicit Threads
@@ -270,6 +281,7 @@ To achieve parallelism in a seamless manner (i.e. without having to alter my ear
 5. The design does not parallelize a Pump or a Sink – only Filters are parallelizable.
 6. Parallelizable Filters are registered in the public Registry.
 
+![Parallelizer & Serializer](/docs/parallel-pipeline.png)
 
 ## Known Issues with the  ```ParallelPipeline```  Implementation
 
@@ -282,27 +294,21 @@ To achieve parallelism in a seamless manner (i.e. without having to alter my ear
 
 It is interesting to note from the various tables printed in this report that the overall response time of the pipeline is almost the same as the individual response times of the components. This is not counter intuitive because the components are connected in series, and the overall progress can only be as fast as the slowest component. Some components are inherently slow or non-parallelizable and may be choke points in the pipeline.
 
-1. text-streamer
+1. text-streamer - The pump reads a text file from the system, and file I/O is inherently slow. That makes the pump, text-streamer, a bottleneck to the pipeline.
 
-The pump reads a text file from the system, and file I/O is inherently slow. That makes the pump, text-streamer, a bottleneck to the pipeline.
+2. Low pipe capacity - There seems to be an optimal pipe capacity below which the performance of the pipeline is severely hampered.
 
-2. Low pipe capacity
+3. term-frequency-counter - The term counter (term-frequency-counter) does not seem to have exploitable parallelism. Term counting has to be done at a single point, or there has to be additional modification to synchronize counts by multiple threads. Therefore, the filter term-frequency-counter cannot be parallelized and is a potential bottleneck.
 
-There seems to be an optimal pipe capacity below which the performance of the pipeline is severely hampered.
+4. frequency-term-inverter - Frequency-term inversion has to be done at a single point, or there needs to be some additional modification to integrate all the _frequency-to-list-of-terms_ maps constructed by several threads. Therefore, the filter term-frequency-counter is not parallelizable and is a potential bottleneck.
 
-3. term-frequency-counter
-
-The term counter (term-frequency-counter) does not seem to have exploitable parallelism. Term counting has to be done at a single point, or there has to be additional modification to synchronize counts by multiple threads. Therefore, the filter term-frequency-counter cannot be parallelized and is a potential bottleneck.
-
-4. frequency-term-inverter
-
-Frequency-term inversion has to be done at a single point, or there needs to be some additional modification to integrate all the _frequency-to-list-of-terms_ maps constructed by several threads. Therefore, the filter term-frequency-counter is not parallelizable and is a potential bottleneck.
+![Response times](/docs/parallel-response-time.png)
 
 ## Running the Program
 
 The program is modified to take the pipe type and the number of parallel streams as user inputs. Run the program as (values are for example only):
 
-```$ java -jar executable.jar filename.txttype parallel capacity 256 streams 3```
+```$ java -jar executable.jar filename.txt type parallel capacity 256 streams 3```
 
 Note: The first argument is compulsory and must always be the input file path. The rest are optional and could come in any order in the form key1 value1 key2 value2 … (whitespace separated). The program parameters and their possible values are:
 
