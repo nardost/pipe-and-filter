@@ -45,18 +45,9 @@ public class Configuration {
          */
         Arrays.stream(STOP_WORDS).forEach(w -> STOP_WORDS_MAP.put(w.toLowerCase(), true));
     }
-    /**
-     * Parallelizable Components
-     */
-    public static Map<String, Boolean> parallelizable = new HashMap<>();
+
     /**
      * How many parallel streams? Let's make it same for all...
      */
     public static int NUMBER_OF_PARALLEL_INSTANCES = 2;
-    static {
-        parallelizable.put("tokenizer", true);
-        parallelizable.put("text-preprocessor", true);
-        parallelizable.put("stop-word-remover", true);
-        parallelizable.put("en-porter-stemmer", true);
-    }
 }

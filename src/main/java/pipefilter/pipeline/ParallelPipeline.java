@@ -21,7 +21,7 @@ import java.util.concurrent.Executors;
 
 import static pipefilter.config.Configuration.NUMBER_OF_PARALLEL_INSTANCES;
 import static pipefilter.config.Configuration.PIPE_CAPACITY;
-import static pipefilter.config.Configuration.parallelizable;
+import static pipefilter.config.Registry.parallelizable;
 
 /**
  * @author Nardos Tessema

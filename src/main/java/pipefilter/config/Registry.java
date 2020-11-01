@@ -59,7 +59,18 @@ public class Registry {
     public static final Map<String, Class<? extends Sink<?, ?>>> registeredSinks = new HashMap<>();
 
     static  {
-        // registeredSinks.put("frequency-counter", TermFrequencyCounter.class);
         registeredSinks.put("frequency-term-inverter", FrequencyTermInverter.class);
+    }
+
+    /**
+     * Parallelizable Components
+     */
+    public static Map<String, Boolean> parallelizable = new HashMap<>();
+
+    static {
+        parallelizable.put("tokenizer", true);
+        parallelizable.put("text-preprocessor", true);
+        parallelizable.put("stop-word-remover", true);
+        parallelizable.put("en-porter-stemmer", true);
     }
 }
