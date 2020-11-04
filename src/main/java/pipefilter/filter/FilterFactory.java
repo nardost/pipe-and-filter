@@ -59,7 +59,7 @@ public class FilterFactory {
      *
      *   public class SomeFilter implements Filter<String, IntStream>
      *
-     * inferFilterInput("some-filter") will return "java.lang.String"
+     * getFilterInputType("some-filter") will return "java.lang.String"
      *
      * @param name the name of the filter in the registry
      * @return the input type of the filter
@@ -77,7 +77,7 @@ public class FilterFactory {
      *
      *   public class SomeFilter implements Filter<String, IntStream>
      *
-     * inferFilterOutput("some-filter") will return "java.util.stream.IntStream"
+     * getFilterOutputType("some-filter") will return "java.util.stream.IntStream"
      *
      * @param name the name of the filter in the registry
      * @return the output type of the filter

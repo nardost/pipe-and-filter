@@ -75,7 +75,7 @@ public class ParallelPipeline implements Pipeline {
          * so we can use a fixed thread pool.
          */
         final int nThreads = (int) doneSignal.getCount();
-        ExecutorService executor = Executors.newFixedThreadPool(nThreads);
+        ExecutorService executor = Executors.newCachedThreadPool();
         pipelineComponents.forEach(executor::execute);
         /*
          * Wait for all threads to be done before returning to the main thread.
